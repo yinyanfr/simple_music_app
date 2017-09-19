@@ -1,0 +1,13 @@
+{
+  "userAuth": {
+    "userInvalid": "User n'est pas trouvé.",
+    "idShort": "Identifiant trop court.",
+    "idInvalid": "Identifiant contient des caratères invalides."
+  },
+  "dbZikub": {
+    "connectSuccess": "Connection vers le base de donnée réussie",
+    "connectFail": "Connection vers le base de donnée échouée.",
+    "insertSuccess": "Insertion de donnée réussie.",
+    "insertFail": "Insertion de donnée échouée."
+  }
+}
