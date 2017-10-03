@@ -82,4 +82,55 @@ var songSchema = new mongoose.Schema({
 
 model.Song = mongoose.model("Song", songSchema, "song");
 
+var playlistSchema = new mongoose.Schema({
+    uid: uid,
+    name: {
+        type: String,
+        trim: true,
+        required: true,
+        maxlength: 140
+    },
+    discription: {
+        type: String
+    },
+    nbTitle: {
+        type: Number
+    }
+});
+
+model.Playlist = mongoose.model("Playlist", playlistSchema, "playlist");
+
+var settingSchema = new mongoose.Schema({
+    uid: uid,
+    notification: {
+        type: Boolean
+    }
+});
+
+model.Setting = mongoose.model("Setting", settingSchema, "setting");
+
+var statusSchema = new mongoose.Schema({
+    uid: uid,
+    nbTitreLike: {
+        type: Number
+    },
+    nbPlShared: {
+        type: Number
+    },
+    nbPlPublished: {
+        type: Number
+    },
+    nbTitrePublished: {
+        type: Number
+    },
+    nbLisstenedbyWeb: {
+        type: Number
+    },
+    nbPl: {
+        type: Number
+    }
+});
+
+model.Status = mongoose.model("Status", statusSchema, "status");
+
 module.exports = model;

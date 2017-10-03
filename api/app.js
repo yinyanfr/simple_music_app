@@ -2,6 +2,7 @@ const express = require("express");
 const {SHA256} = require("crypto-js");
 const mongoose = require("mongoose");
 const assert = require("assert");
+const request = require("request-promise-native");
 
 const model = require("./model");
 
@@ -35,13 +36,8 @@ app.get("/register/:id/:pw/:email", (req, res) => {
 });
 
 app.get("/test", (req, res) => {
-    var schema = new mongoose.Schema({ name: 'string', size: 'string' });
-    var Tank = mongoose.model('Tank', schema, "user");
-    var small = new Tank({ size: 'small' });
-    small.save(function (err) {
-        if (err) res.status(400).send(err);
-        // saved!
-    })
+    request("http://node.73000.fr/dev/randomProfile/10")
+        .then(result => res.send(result), err => res.status(400).send(err))
 });
 
 
