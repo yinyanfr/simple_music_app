@@ -15,6 +15,7 @@ mongoose.Promise = global.Promise;
 
 var app = express();
 
+app.use(express.static("./../ui/build"));
 
 app.get("/", (req, res) => {
     res.send("Hello World");
@@ -44,4 +45,3 @@ app.get("/test", (req, res) => {
 
 
 app.listen(7060);
-
