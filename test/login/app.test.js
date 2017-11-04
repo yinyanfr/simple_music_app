@@ -25,6 +25,8 @@ const fakeUser = {
     pseudo: "1"
 };
 
+var tmpToken = "";
+
 const removeTestUser = done => {
     User.findOneAndRemove({email: testUser.email})
         .then(() => done())
@@ -103,14 +105,16 @@ const songValid = {
     artist: "Yan",
     source: "youtube",
     link: "https://www.youtube.com/watch?v=X44tEMCMHWc"
-}
+};
 
 const existSong = {
     "name": "祈りの花",
     "artist": "Yan",
     "source": "youtube",
     "link": "https://www.youtube.com/watch?v=mn-CLAvNknA"
-}
+};
+
+const existSid = "22faa62c-4d08-4fd9-95f8-f50efab9e6fb";
 
 describe("POST /newsong", () => {
     it("should add a new song when info is valid", done => {
@@ -150,16 +154,110 @@ describe("POST /newsong", () => {
 
     it("should NOT add a song with identique [link]", done => {
         request(app)
-        .post("/newsong")
-        .send(existSong)
-        .expect(400)
-        .end((err, res) => {
-            if(err) return done(err);
-            done()
-        })
+            .post("/newsong")
+            .send(existSong)
+            .expect(400)
+            .end((err, res) => {
+                if(err) return done(err);
+                done()
+            })
     })
 });
 
+describe("GET /song", () => {
+    it("should return return link to a sid given", done => {
+        request(app)
+            .get(`/song/${existSid}`)
+            .expect(200)
+            .expect(res => {
+                expect(res.body.link).toBe(existSong.link)
+            })
+            .end(done)
+    });
 
+    it("should return 404 to a sid non-exist", done => {
+        request(app)
+            .get("/song/something_else")
+            .expect(404)
+            .end(done)
+    })
+});
 
+describe("POST /login", () => {
+    it("should return token for a existing correct user", done => {
+        request(app)
+            .post("/login")
+            .send(existUser)
+            .expect(200)
+            .expect(res => {
+                var token = res.headers["x-auth"];
+                tmpToken = token;
+                expect(token).toBeTruthy()
+            })
+            .end((err, res) => {
+                if(err) return done(err);
+                // token should be registered into db
+                User.findOne({email: existUser.email})
+                    .then(user => {
+                        const tokens = user.toObject().tokens;
+                        expect(tokens[tokens.length - 1]).toMatchObject({
+                            access: "auth",
+                            token: res.headers["x-auth"]
+                        });
+                        done()
+                    })
+                    .catch(err => done(err))
+            })
+    });
+
+    it("should refuse a exising user without correct password", done => {
+        request(app)
+        .post("/login")
+        .send({
+            email: existUser.email,
+            password: existUser.password + "not_correct"
+        })
+        .expect(401)
+        .expect(res => {
+            expect(res.headers["x-auth"]).toBeFalsy()
+        })
+        .end(done)
+    });
+
+    it("should refuse a non registered user", done => {
+        request(app)
+        .post("/login")
+        .send({
+            email: "not@registered.yet",
+            password: "whatever"
+        })
+        .expect(401)
+        .expect(res => {
+            expect(res.headers["x-auth"]).toBeFalsy()
+        })
+        .end(done)
+    });
+}) 
+
+describe("DELETE /logout", () => {
+    it("should delete a token that is correct", done => {
+        request(app)
+            .delete("/logout")
+            .set("x-auth", tmpToken)
+            .expect(200)
+            .end((err, res) => {
+                if(err) return done(err);
+                expect(res.body.nModified).toBe(1);
+                done();
+            })
+    });
+
+    it("should go 401 for a incorrect token", done => {
+        request(app)
+            .delete("/logout")
+            .set("x-auth", "whatever")
+            .expect(401)
+            .end(done)
+    });
+})
 

@@ -1,6 +1,7 @@
 const express = require("express"),
       bodyParser = require("body-parser");
 var {mongoose} = require("./db");
+const authenticate = require("./authenticate");
 const {pick} = require("lodash");
 const uuid = require("uuid");
 var User = require("./user"),
@@ -79,11 +80,38 @@ app.get("/song/:sid", (req, res) => {
     const {sid} = req.params;
     Song.findOne({sid})
         .then(song => {
+            if(!song.link) return Promise.reject("Not Found");
             res.send(pick(song, ["sid", "name", "artist", "source", "link"]))
-        }, err => {
-            res.status(404).send(err);
+        })
+        .catch(err => {
+            res.status(404).send(err)
         })
 });
+
+app.post("/login", (req, res) => {
+    const {email, password} = req.body;
+    User.findByPw(email, password)
+        .then(user => {
+            return user.generateAuthToken()
+                       .then(token => {
+                           res.header("x-auth", token).send(user)
+                       })
+        })
+        .catch(err => {
+            res.status(401).send(err)
+        })
+});
+
+app.delete("/logout", authenticate ,(req, res) => {
+    req.user.removeToken(req.token)
+            .then(done => {
+                res.status(200).send(done)
+            }, err => {
+                res.status(400).send(err)
+            })
+})
+
+
 
 // app.post("/newplaylist", (req, res) => {
 //     var pl = new Playlist();
