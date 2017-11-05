@@ -111,11 +111,11 @@ app.delete("/logout", authenticate ,(req, res) => {
 
 app.post("/newplaylist", authenticate, (req, res) => {
     var pl = new Playlist();
-    const {name, isPublic} = req.body;
+    const {name, isPrivate} = req.body;
     pl.pid = uuid();
     pl.creator = req.user.toObject().email;
     pl.name = name;
-    pl.isPublic = isPublic
+    pl.isPrivate = isPrivate
     pl.save().then(data => {
         res.send(data);
     }, err => {
@@ -139,7 +139,89 @@ app.post("/pushsid", authenticate, (req, res) => {
                 console.log(err)
                 res.status(401).send(err);
             })
+});
+
+app.get("/me", authenticate, (req, res) => {
+    res.send(pick(req.user.toObject(), ["email", "pseudo"]))
+});
+
+app.get("/mylist", authenticate, (req, res) => {
+    const {email} = req.user.toObject();
+    Playlist.find({creator: email})
+        .then(pls => {
+            res.send(pls)
+        })
 })
+
+app.delete("/deletepl", authenticate, (req, res) => {
+    const {pid} = req.body;
+    Playlist.findOneAndRemove({pid, creator: req.user.toObject().email})
+            .then(data => {
+                res.send(data)
+            })
+            .catch(err => {
+                res.status(400).send(err)
+            })
+});
+
+const getAuth = token => {
+    return new Promise((resolve, reject) => {
+        User.findByToken(token)
+            .then(user => {
+                if(!user) reject("User not found");
+                resolve(user)
+            })
+            .catch(err => {
+                reject(err)
+            })
+    })
+};
+
+app.get("/songlist/:pid", (req, res) => {
+    const {pid} = req.params;
+    Playlist.findOne({pid})
+            .then(pl => {
+                if(!pl) return Promise.reject("playlist not found");
+                if(pl.isPrivate){
+                    let token = req.header("x-auth");
+                    getAuth(token)
+                        .then(user => {
+                            if(user.email !== pl.creator) return Promise.reject("Authentification failed");
+                            res.send(pl.songs)
+                        })
+                        .catch(err => {
+                            res.status(401).send(err)
+                        })
+                }else{
+                    res.send(pl.songs)
+                }
+            })
+            .catch(err => {
+                res.status(404).send(err)
+            })
+});
+
+app.patch("/toggleVis", authenticate, (req, res) => {
+    const {pid} = req.body;
+    Playlist.findOne({pid, creator: req.user.toObject().email})
+            .then(pl => {
+                if(!pl) res.status(404).send("Playlist not found");
+                let toggled = !pl.isPrivate;
+                pl.update(
+                    {$set: {isPrivate: toggled}}
+                )
+                  .then(data => {
+                      res.send(data)
+                  })
+                  .catch(err => {
+                      res.status(400).send(err)
+                  })
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).send(err)
+            })
+});
 
 
 

@@ -19,7 +19,7 @@ var playlistSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    isPublic:{
+    isPrivate:{
         type: Boolean,
         default: false
     },

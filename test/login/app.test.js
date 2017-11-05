@@ -5,6 +5,7 @@ const User = require("./user"),
       Playlist = require("./playlist");
 const bcrypt = require("bcryptjs");
 const uuid = require("uuid");
+const {isEqual} = require("lodash");
 
 const {app} = require("./app");
 
@@ -50,7 +51,7 @@ beforeEach(removeTestUser);
 beforeEach(removeTestSong);
 beforeEach(removeTestPl);
 
-describe("POST /register", () => {
+describe("POST /register to register a new unique user", () => {
     it("should register a new user when data is valid", (done) => {
         request(app)
             .post("/register")
@@ -161,7 +162,7 @@ const testNewsong = (done, callback) => {
     })
 }
 
-describe("POST /newsong", () => {
+describe("POST /newsong to add a new song into [db]", () => {
     it("should add a new song when info is valid", done => {
         return testNewsong(done)
     });
@@ -196,7 +197,7 @@ describe("POST /newsong", () => {
     })
 });
 
-describe("GET /song", () => {
+describe("GET /song to get link of a song by its sid", () => {
     it("should return return link to a sid given", done => {
         Song.findOne({})
             .then(song => {
@@ -238,23 +239,24 @@ const testLogin = (done, callback) => {
             })
             .end((err, res) => {
                 if(err) return done(err);
+                if(callback) return callback(res.headers["x-auth"]);
                 // token should be registered into db
                 User.findOne({email})
-                    .then(user => {
+                    .then(user => {                    
+                        expect(user).toBeDefined();
                         const tokens = user.toObject().tokens;
                         expect(tokens[tokens.length - 1]).toMatchObject({
                             access: "auth",
                             token: res.headers["x-auth"]
                         });
-                        if(callback) return callback(res.headers["x-auth"]);
-                        return done()
+                        done()                  
                     })
                     .catch(err => done(err))
             })
     })
 };
 
-describe("POST /login", () => {
+describe("POST /login to log in a user and generate him a token", () => {
     it("should return token for a existing correct user", done => {
         return testLogin(done)
     });
@@ -288,7 +290,7 @@ describe("POST /login", () => {
     });
 }) 
 
-describe("DELETE /logout", () => {
+describe("DELETE /logout to log out a user and delete its token", () => {
     it("should delete a token that is correct", done => {
         return testLogin(done, token => {
             request(app)
@@ -324,38 +326,47 @@ const testNewPl = (done, callback) => {
             })
             .end((err, res) => {
                 if(err) return done(err);
-                if(callback) return callback(token, res.body.pid);
-                return done()
+                const {pid} = res.body;
+                if(callback) return callback(token, pid);
+                else{
+                    Playlist.findOne({pid})
+                            .then(pl => {
+                                expect(pl).toBeDefined();
+                                expect(pl.pid).toBe(pid);
+                                done();
+                            })
+                            .catch(err => done(err))
+                }
             })
     })
-}
+};
 
-describe("POST /newplaylist", () => {
+describe("POST /newplaylist to create a playlist for a user", () => {
     it("should add a playlist as long as a valid user is logged in", done => {
         return testNewPl(done)
     })
 });
 
-describe("POST /pushsid", () => {
+describe("POST /pushsid to push an existing song into a [playlist] by its creator", () => {
     it("should push a song into a pl with correct sid and pid", done => {
         return testNewPl(done, (token, pid) => {
             return testNewsong(done, sid => {
                 request(app)
-                .post("/pushsid")
-                .set("x-auth", token)
-                .send({pid, sid})
-                .expect(200)
-                .end((err, res) => {
-                    if(err) return done(err);
-                    Playlist.findOne({pid})
-                            .then(pl => {
-                                if(!pl) return Promise.reject("playlist not found");
-                                const {songs} = pl;
-                                expect(songs[songs.length - 1].sid).toBe(sid);
-                                done()
-                            })
-                            .catch(err => done(err))
-                })
+                    .post("/pushsid")
+                    .set("x-auth", token)
+                    .send({pid, sid})
+                    .expect(200)
+                    .end((err, res) => {
+                        if(err) return done(err);
+                        Playlist.findOne({pid})
+                                .then(pl => {
+                                    if(!pl) return Promise.reject("playlist not found");
+                                    const {songs} = pl;
+                                    expect(songs[songs.length - 1].sid).toBe(sid);
+                                    done()
+                                })
+                                .catch(err => done(err))
+                    })
             })
         })
     });
@@ -364,12 +375,183 @@ describe("POST /pushsid", () => {
         return testNewPl(done, (token, pid) => {
             return testNewsong(done, sid => {
                 request(app)
-                .post("/pushsid")
-                .set("x-auth", token+"1")
-                .send({pid, sid})
-                .expect(401)
-                .end(done)
+                    .post("/pushsid")
+                    .set("x-auth", token+"1")
+                    .send({pid, sid})
+                    .expect(401)
+                    .end(done)
             })
         })
     })
+});
+
+describe("GET /me to verify the identity of a user with its stored token", () => {
+    it("should go 200 with email and pseudo of the user corresponding a given token", done => {
+        return testLogin(done, token => {
+            request(app)
+                .get("/me")
+                .set("x-auth", token)
+                .expect(200)
+                .expect(res => {
+                    expect(res.body).toMatchObject({
+                        email: testUser.email,
+                        pseudo: testUser.pseudo
+                    })
+                })
+                .end(done)
+        })
+    });
+
+    it('should go 401 for an invalid token', done => {
+        return testLogin(done, token => {
+            request(app)
+                .get("/me")
+                .set("x-auth", token+"1")
+                .expect(401)
+                .end(done)
+        })
+    })
+});
+
+describe("GET /mylist to list all playlists created by a user", () => {
+    it("should get every list created by a valid user with his token", done => {
+        return testNewPl(done, (token, pid) => {
+            request(app)
+                .get("/mylist")
+                .set("x-auth", token)
+                .expect(200)
+                .expect(res => {
+                    res.body.forEach(e => {
+                        expect(e.creator).toBe(testUser.email)
+                    })
+                })
+                .end(done)
+        })
+    });
+
+    it("should go 401 for an invalid token", done => {
+        return testNewPl(done, (token, pid) => {
+            request(app)
+                .get("/mylist")
+                .set("x-auth", token+"1")
+                .expect(401)
+                .end(done)
+        })
+    })
+});
+
+describe("DELETE /deletepl to delete a playlist created by user", () => {
+    it("should delete a playlist created by a user by its pid", done => {
+            return testNewPl(done, (token, pid) => {
+                request(app)
+                    .delete("/deletepl")
+                    .set("x-auth", token)
+                    .send({pid})
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body.pid).toBe(pid)
+                    })
+                    .end((err, res) => {
+                        if(err) return done(err);
+                        Playlist.findOne({pid})
+                                .then(pl => {
+                                    expect(pl).toBeFalsy();
+                                    done();
+                                })
+                                .catch(err => done(err))
+                    })
+            })
+    });
+
+    it("should go 401 when a user attempt to delete a playlist that is not created by him", done => {
+            return testNewPl(done, (token, pid) => {
+                request(app)
+                    .delete("/deletepl")
+                    .set("x-auth", token+"1")
+                    .send({pid})
+                    .expect(401)
+                    .end(done)
+            })
+        });
+});
+
+const testToggle = (done, callback) => {
+    testNewPl(done, (token, pid) => {
+        request(app)
+            .patch("/toggleVis")
+            .set("x-auth", token)
+            .send({pid})
+            .expect(200)
+            .end((err, res) => {
+                if(err) return done(err);
+                if(callback){
+                    return callback(token, pid)
+                }else{
+                    Playlist.findOne({pid})
+                        .then(pl => {
+                            expect(pl).toBeDefined();
+                            expect(pl.isPrivate).toBe(!testPl.isPrivate);
+                            done();
+                        })
+                        .catch(err => done(err))
+                }
+            })
+    })
+}
+
+describe("PATCH /toggleVis to toggle visuabilty of a playlist created by its user by its pid", () => {
+    it("should toggle visuabily when user is correct", done => {
+        return testToggle(done)
+    })
+});
+
+describe(`GET /songlist/:pid to every song in a playlist by its pid, 
+authentification is required should the playlist be private`, () => {
+    it("should list every song in a playlist public", done => {
+        return testNewPl(done, (token, pid) => {
+            request(app)
+                .get(`/songlist/${pid}`)
+                .expect(200)
+                .end((err, res) => {
+                    if(err) return done(err);
+                    Playlist.findOne({pid})
+                            .then(pl => {
+                                expect(isEqual(res.body, pl.songs)).toBe(true);
+                                done();
+                            })
+                            .catch(err => done(err))
+                })
+        })
+    });
+
+    it("should work for a private playlist with authentification", done => {
+        return testToggle(done, (token, pid) => {
+            request(app)
+                .get(`/songlist/${pid}`)
+                .set("x-auth", token)
+                .expect(200)
+                .end((err, res) => {
+                    if(err) return done(err);
+                    Playlist.findOne({pid})
+                            .then(pl => {
+                                expect(isEqual(res.body, pl.songs)).toBe(true);
+                                done();
+                            })
+                            .catch(err => done(err))
+                })
+        })
+    });
+
+    it("should go 401 for a private playlist without proper authentification", done => {
+        return testToggle(done, (token, pid) => {
+            request(app)
+                .get(`/songlist/${pid}`)
+                .set("x-auth", token+"1")
+                .expect(401)
+                .end(done)
+        })
+    })
 })
+
+
+
