@@ -13,10 +13,10 @@ const existUser = {
     password: "123456",
     pseudo: "ucec"
 }
-
+const testUserPw = "123456";
 const testUser = {
     email: "i@73000.fr",
-    password: "123456",
+    password: testUserPw,
     pseudo: "ucec"
 };
 
@@ -24,6 +24,10 @@ const fakeUser = {
     email: "not.a.email",
     pseudo: "1"
 };
+
+const testPl = {
+    name: "Lorem Ipsum"
+}
 
 var tmpToken = "";
 
@@ -35,10 +39,16 @@ const removeTestUser = done => {
 const removeTestSong = done => {
     Song.findOneAndRemove({link: songValid.link})
         .then(() => done())
+};
+
+const removeTestPl = done => {
+    Playlist.findOneAndRemove({name: testPl.name})
+        .then(() => done())
 }
 
 beforeEach(removeTestUser);
 beforeEach(removeTestSong);
+beforeEach(removeTestPl);
 
 describe("POST /register", () => {
     it("should register a new user when data is valid", (done) => {
@@ -48,11 +58,11 @@ describe("POST /register", () => {
             .expect(200) // should success
             .expect(res => {
                 // res should be identique as it is defined
-                const {email, pseudo} = res.body.data;
+                const {email, pseudo} = res.body;
                 expect(email).toBe(testUser.email);
                 expect(pseudo).toBe(testUser.pseudo);
                 // should receive nothing more
-                expect(Object.keys(res.body.data).length).toBe(2);
+                expect(Object.keys(res.body).length).toBe(2);
             })
             .end((err, res) => {
                 if(err) return done(err);
@@ -94,9 +104,19 @@ describe("POST /register", () => {
     it("should NOT register a existing user", done => {
         request(app)
             .post("/register")
-            .send(existUser)
-            .expect(400)
-            .end(done)
+            .send(testUser)
+            .expect(200)
+            .end((err, res) => {
+                if(err) return done(err);
+                request(app)
+                    .post("/register")
+                    .send(testUser)
+                    .expect(400)
+                    .expect(res => {
+                        expect(res.body.code).toBe(11000)
+                    })
+                    .end(done)
+            })
     });
 });
 
@@ -116,29 +136,34 @@ const existSong = {
 
 const existSid = "22faa62c-4d08-4fd9-95f8-f50efab9e6fb";
 
+const testNewsong = (done, callback) => {
+    request(app)
+    .post("/newsong")
+    .send(songValid)
+    .expect(200)
+    .expect(res => {
+        const {sid, name, link} = res.body;
+        expect(sid).toBeTruthy();
+        expect(name).toBe(songValid.name); 
+        expect(link).toBe(songValid.link);
+    })
+    .end((err, res) => {
+        if(err) return done(err);
+        Song.find({link: songValid.link})
+            .then(songs => {
+                expect(songs.length).toBe(1);
+                expect(songs[0].sid).toBeTruthy();
+                expect(songs[0].link).toBe(songValid.link);
+                if(callback) return callback(songs[0].sid);
+                return done()
+            })
+            .catch(err => done(err))
+    })
+}
+
 describe("POST /newsong", () => {
     it("should add a new song when info is valid", done => {
-        request(app)
-            .post("/newsong")
-            .send(songValid)
-            .expect(200)
-            .expect(res => {
-                const {sid, name, link} = res.body;
-                expect(sid).toBeTruthy();
-                expect(name).toBe(songValid.name); 
-                expect(link).toBe(songValid.link);
-            })
-            .end((err, res) => {
-                if(err) return done(err);
-                Song.find({link: songValid.link})
-                    .then(songs => {
-                        expect(songs.length).toBe(1);
-                        expect(songs[0].sid).toBeTruthy();
-                        expect(songs[0].link).toBe(songValid.link);
-                        done();
-                    })
-                    .catch(err => done(err))
-            })
+        return testNewsong(done)
     });
 
     it("should NOT add a new song when info isn't valid", done => {
@@ -152,27 +177,39 @@ describe("POST /newsong", () => {
             })
     });
 
-    it("should NOT add a song with identique [link]", done => {
+    it("should do nothing for a song with indentique link, but still act as if it is added", done => {
         request(app)
             .post("/newsong")
             .send(existSong)
-            .expect(400)
+            .expect(200)
             .end((err, res) => {
                 if(err) return done(err);
-                done()
+                const {sid, link} = res.body;
+                Song.findOne({sid})
+                    .then(song => {
+                        expect(song).toBeDefined();
+                        expect(link).toBe(song.link);
+                        done();
+                    })
+                    .catch(err => done(err))
             })
     })
 });
 
 describe("GET /song", () => {
     it("should return return link to a sid given", done => {
-        request(app)
-            .get(`/song/${existSid}`)
-            .expect(200)
-            .expect(res => {
-                expect(res.body.link).toBe(existSong.link)
+        Song.findOne({})
+            .then(song => {
+                expect(song).toBeDefined();
+                const {sid} = song;
+                request(app)
+                    .get(`/song/${sid}`)
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body.sid).toBe(sid)
+                    })
+                    .end(done)
             })
-            .end(done)
     });
 
     it("should return 404 to a sid non-exist", done => {
@@ -183,45 +220,57 @@ describe("GET /song", () => {
     })
 });
 
-describe("POST /login", () => {
-    it("should return token for a existing correct user", done => {
+const testLogin = (done, callback) => {
+    request(app)
+    .post("/register")
+    .send(testUser)
+    .expect(200)
+    .end((err, res) => {
+        if(err) return done(err);
+        const {email, pseudo} = res.body;
         request(app)
             .post("/login")
-            .send(existUser)
+            .send({email, pseudo, password: testUserPw})
             .expect(200)
             .expect(res => {
                 var token = res.headers["x-auth"];
-                tmpToken = token;
                 expect(token).toBeTruthy()
             })
             .end((err, res) => {
                 if(err) return done(err);
                 // token should be registered into db
-                User.findOne({email: existUser.email})
+                User.findOne({email})
                     .then(user => {
                         const tokens = user.toObject().tokens;
                         expect(tokens[tokens.length - 1]).toMatchObject({
                             access: "auth",
                             token: res.headers["x-auth"]
                         });
-                        done()
+                        if(callback) return callback(res.headers["x-auth"]);
+                        return done()
                     })
                     .catch(err => done(err))
             })
+    })
+};
+
+describe("POST /login", () => {
+    it("should return token for a existing correct user", done => {
+        return testLogin(done)
     });
 
     it("should refuse a exising user without correct password", done => {
         request(app)
-        .post("/login")
-        .send({
-            email: existUser.email,
-            password: existUser.password + "not_correct"
-        })
-        .expect(401)
-        .expect(res => {
-            expect(res.headers["x-auth"]).toBeFalsy()
-        })
-        .end(done)
+            .post("/login")
+            .send({
+                email: existUser.email,
+                password: existUser.password + "not_correct"
+            })
+            .expect(401)
+            .expect(res => {
+                expect(res.headers["x-auth"]).toBeFalsy()
+            })
+            .end(done)
     });
 
     it("should refuse a non registered user", done => {
@@ -241,15 +290,17 @@ describe("POST /login", () => {
 
 describe("DELETE /logout", () => {
     it("should delete a token that is correct", done => {
-        request(app)
+        return testLogin(done, token => {
+            request(app)
             .delete("/logout")
-            .set("x-auth", tmpToken)
+            .set("x-auth", token)
             .expect(200)
             .end((err, res) => {
                 if(err) return done(err);
                 expect(res.body.nModified).toBe(1);
                 done();
             })
+        })
     });
 
     it("should go 401 for a incorrect token", done => {
@@ -259,5 +310,66 @@ describe("DELETE /logout", () => {
             .expect(401)
             .end(done)
     });
-})
+});
 
+const testNewPl = (done, callback) => {
+    return testLogin(done, token => {
+        request(app)
+            .post("/newplaylist")
+            .set("x-auth", token)
+            .send(testPl)
+            .expect(200)
+            .expect(res => {
+                expect(res.body.creator).toBe(testUser.email)
+            })
+            .end((err, res) => {
+                if(err) return done(err);
+                if(callback) return callback(token, res.body.pid);
+                return done()
+            })
+    })
+}
+
+describe("POST /newplaylist", () => {
+    it("should add a playlist as long as a valid user is logged in", done => {
+        return testNewPl(done)
+    })
+});
+
+describe("POST /pushsid", () => {
+    it("should push a song into a pl with correct sid and pid", done => {
+        return testNewPl(done, (token, pid) => {
+            return testNewsong(done, sid => {
+                request(app)
+                .post("/pushsid")
+                .set("x-auth", token)
+                .send({pid, sid})
+                .expect(200)
+                .end((err, res) => {
+                    if(err) return done(err);
+                    Playlist.findOne({pid})
+                            .then(pl => {
+                                if(!pl) return Promise.reject("playlist not found");
+                                const {songs} = pl;
+                                expect(songs[songs.length - 1].sid).toBe(sid);
+                                done()
+                            })
+                            .catch(err => done(err))
+                })
+            })
+        })
+    });
+
+    it("should NOT touch a playlist that is not created by the user", done => {
+        return testNewPl(done, (token, pid) => {
+            return testNewsong(done, sid => {
+                request(app)
+                .post("/pushsid")
+                .set("x-auth", token+"1")
+                .send({pid, sid})
+                .expect(401)
+                .end(done)
+            })
+        })
+    })
+})

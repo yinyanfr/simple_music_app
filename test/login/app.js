@@ -21,16 +21,12 @@ app.get("/api", (req, res) => {
 app.post("/register", (req, res) => {
     var user = new User();
     const {email, password, pseudo} = req.body;
-    console.log(req.body)
     user.email = email;
     user.password = password;
     user.pseudo = pseudo;
 
     user.save().then(data => {
-        res.json({
-            msg: "user registered",
-            data: pick(data, ["email", "pseudo"])
-        })
+        res.send(data)
     },
     err => {
         res.status(400).send(err)
@@ -68,11 +64,11 @@ app.post("/newsong", (req, res) => {
     song.artist = artist;
     song.source = source;
     song.link = link;
-    song.save()
+    Song.addSong(song)
         .then(data => {
             res.send(data)
         }, err => {
-            res.status(400).send(err);
+            res.status(400).send(err)
         })
 });
 
@@ -113,15 +109,37 @@ app.delete("/logout", authenticate ,(req, res) => {
 
 
 
-// app.post("/newplaylist", (req, res) => {
-//     var pl = new Playlist();
-//     const {}
-// })
+app.post("/newplaylist", authenticate, (req, res) => {
+    var pl = new Playlist();
+    const {name, isPublic} = req.body;
+    pl.pid = uuid();
+    pl.creator = req.user.toObject().email;
+    pl.name = name;
+    pl.isPublic = isPublic
+    pl.save().then(data => {
+        res.send(data);
+    }, err => {
+        res.status(400).send(err)
+    })
+});
 
-// app.post("/add/:pid/:sid", (req, res) => {
-//     const {pid, sid} = req.params;
-
-// });
+app.post("/pushsid", authenticate, (req, res) => {
+    const {pid, sid} = req.body;
+    Playlist.findOne({pid})
+            .then(pl => {
+                if(!pl) return Promise.reject("playlist not found");
+                if(pl.creator !== req.user.toObject().email)
+                    return Promise.reject("playlist authentication failed")
+                return pl.addSong(sid)
+            })
+            .then(song => {
+                res.send(song)
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(401).send(err);
+            })
+})
 
 
 

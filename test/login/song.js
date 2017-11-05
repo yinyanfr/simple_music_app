@@ -33,4 +33,14 @@ var songSchema = new mongoose.Schema({
     }
 });
 
+songSchema.statics.addSong = function (newsong) {
+    var Song = this;
+    return Song.findOne({link: newsong.link})
+        .then(song => {
+            if(!song) return newsong.save();
+            return Promise.resolve(song)
+        })
+        .catch(err => Promise.reject(err))
+};
+
 module.exports = mongoose.model("song", songSchema);

@@ -35,13 +35,13 @@ var playlistSchema = new mongoose.Schema({
 
 playlistSchema.methods.addSong = function (sid) {
     var playlist = this;
-    return Song.find({sid}).then(songs => {
-        if(songs.length < 1) return Promise.reject("invalide songid");
-        playlist.songs.push({sid: songs[0].sid});
+    return Song.findOne({sid}).then(song => {
+        if(!song) return Promise.reject("invalide songid");
+        playlist.songs.push({sid: song.sid});
         // should a playlist include identique songs?
         // playlist.songs = uniq(playlist.songs);
         return playlist.save().then(() => {
-            return songs[0]
+            return song
         })
     })
 };
