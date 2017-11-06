@@ -1,5 +1,6 @@
 const express = require("express"),
       bodyParser = require("body-parser");
+const path = require("path");
 var {mongoose} = require("./db");
 const authenticate = require("./authenticate");
 const {pick} = require("lodash");
@@ -10,14 +11,14 @@ var User = require("./user"),
 
 var app = express();
 
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS,PATCH");
-    res.header("X-Powered-By",' 3.2.1')
-    res.header("Content-Type", "application/json;charset=utf-8");
-    next();
-});
+// app.use((req, res, next) => {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS,PATCH");
+//     res.header("X-Powered-By",' 3.2.1')
+//     res.header("Content-Type", "application/json;charset=utf-8");
+//     next();
+// });
 
 app.use(bodyParser.json());
 
@@ -30,6 +31,7 @@ app.get("/api", (req, res) => {
 app.post("/register", (req, res) => {
     var user = new User();
     const {email, password, pseudo} = req.body;
+    console.log(req.body)
     user.email = email;
     user.password = password;
     user.pseudo = pseudo;
@@ -55,10 +57,9 @@ app.get("/userlist", (req, res) => {
 
 app.get("/searchUser/:email", (req, res) => {
     const {email} = req.params;
-    User.find({email}).then(data => {
-        res.json(data.map(e => {
-            return pick(e, ["email", "pseudo"])
-        }))
+    User.findOne({email}).then(data => {
+        if(!data) res.send({})
+        else res.send(data)
     },
     err => {
         res.status(400).send(err)
@@ -99,7 +100,11 @@ app.post("/login", (req, res) => {
         .then(user => {
             return user.generateAuthToken()
                        .then(token => {
-                           res.header("x-auth", token).send(user)
+                           res.header("x-auth", token).send({
+                               email: user.email,
+                               pseudo: user.pseudo,
+                               token
+                           })
                        })
         })
         .catch(err => {
@@ -232,8 +237,7 @@ app.patch("/toggleVis", authenticate, (req, res) => {
             })
 });
 
-
-
+app.use(express.static(__dirname+"/web"));
 
 app.listen(30706, () => {
     console.log("Test server running on 30706")
