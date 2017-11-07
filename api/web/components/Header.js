@@ -16,10 +16,24 @@ const Header = props => {
                    return Promise.reject("logout failed")
                }else {
                    sessionStorage.removeItem("token");
-                   store.dispatch({
-                       type: "DELETEUSER"
-                   })
+                   props.dispatch(
+                        {
+                            type: "DELETEUSER"
+                        }
+                   );
                }
+            })
+            .then(() => {
+                props.dispatch(
+                    {
+                        type: "SETPAGEALL",
+                        data: {
+                            pagename: "auth",
+                            pid: "",
+                            sid: ""
+                        }
+                    }
+               );
             })
             .catch(err => {
                 console.log(err)
@@ -36,7 +50,8 @@ const Header = props => {
 
 const mapStatetoProps = state => (
    {
-       user: state.user
+       user: state.user,
+       page: state.page
    }
 )
 

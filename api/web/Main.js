@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import {connect} from "react-redux";
-import Logopage from "./components/Logopage";
+import Auth from "./components/Auth";
 import Body from "./components/Body";
-import RL from "./components/RL";
 
 const Main = props => (
     <div>
         {
             (() => {
-                if(props.user === 0){
-                    return <Logopage />   
-                }if(props.user === false){
-                    return <RL />
-                }else{
-                    return <Body />
+                switch (props.page.pagename) {
+                    case "auth":
+                        return <Auth />
+                    case "mylist":
+                        return <Body />
+                    default:
+                        return <Auth />
                 }
             })()
         }
@@ -21,10 +21,13 @@ const Main = props => (
 );
 
 const mapStatetoProps = state => (
-   {
-       user: state.user
-   }
-)
+    {
+        page: state.page
+    }
+ )
 
+ 
 export default connect(mapStatetoProps)(Main)
+
+
 
