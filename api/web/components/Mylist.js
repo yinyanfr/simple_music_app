@@ -18,17 +18,20 @@ class Mylist extends Component{
         })
     }
 
+    renderPLs = pls => {
+        var arr = [];
+        pls.forEach((e, i) => {
+            arr.push(<OnePL key={i}>{e}</OnePL>)
+        });
+        return arr
+    }
+
     render(){
+        console.log("pl", this.props.pl)
         return (
             <div>
                 <button onClick={this.onAddPlaylist}>Add Playlist</button>
-                <div>{(() => {
-                    var arr = [];
-                    this.props.pl.forEach((e, i) => {
-                        arr.push(<OnePL key={i}>{e}</OnePL>)
-                    });
-                    return arr
-                })()}</div>
+                <div>{this.renderPLs(this.props.pl)}</div>
             </div>
         )
     }

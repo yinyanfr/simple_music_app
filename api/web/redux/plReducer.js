@@ -1,6 +1,7 @@
 const plDefaultState = [];
 
 const findPlAndDelete = (pid, pls) => {
+    console.log("pid", pid, pls)
     var res = [];
     for(let i = 0; i < pls.length; i++){
         if(pls[i].pid !== pid){
@@ -19,7 +20,7 @@ export default (state = plDefaultState, action) => {
         case "ADDPLALL":
             return [...state, ...action.data];
         case "REFRESHPL":
-            return action.data;
+            return action.data
         case "UNSHIFTPLONE":
             return [action.data, ...state];
         default:

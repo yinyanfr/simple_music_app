@@ -172,6 +172,7 @@ app.delete("/deletepl", authenticate, (req, res) => {
     const {pid} = req.body;
     Playlist.findOneAndRemove({pid, creator: req.user.toObject().email})
             .then(data => {
+                console.log(data)
                 res.send(data)
             })
             .catch(err => {
