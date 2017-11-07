@@ -20,7 +20,34 @@ testToken().then(obj => {
         type: "SETUSER",
         data: obj
     })
-}).catch(err => {
+    return obj.token
+})
+.then((token) => {
+    if(token){
+        var pls = [];
+        fetch(api("mylist"), {
+            method: "GET",
+            headers: new Headers({
+                "x-auth": token
+            })
+        })
+        .then(response => {
+            if(response.status >= 400) return Promise.reject("Get playlists failed");
+            return response.json()
+        })
+        .then(obj => {
+            store.dispatch({
+                type: "REFRESHPL",
+                data: obj
+            })
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }
+})
+.catch(err => {
+    console.log(err)
     store.dispatch({
         type: "DELETEUSER"
     })

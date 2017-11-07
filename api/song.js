@@ -15,8 +15,7 @@ var songSchema = new mongoose.Schema({
     },
     artist:{
         type: String,
-        trim: true,
-        minlength: 1
+        trim: true
     },
     source:{
         type: String,
@@ -30,6 +29,10 @@ var songSchema = new mongoose.Schema({
         required: true,
         unique: true,
         minlength: 1
+    },
+    image: {
+        type: String,
+        trim: true
     }
 });
 

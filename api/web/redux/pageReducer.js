@@ -6,6 +6,7 @@ const pageDefaultState = {
 
 export default (state = pageDefaultState, action) => {
     let {pagename, pid, sid} = action.data || state;
+    console.log(action.type)
     switch (action.type) {
         case "SETPAGENAME":
             return {

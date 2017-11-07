@@ -14,13 +14,7 @@ const Auth = props => (
                 }if(props.user === false){
                     return <RL />
                 }else{
-                    store.dispatch({
-                        type: "SETPAGENAME",
-                        data: {
-                            pagename: "mylist"
-                        }
-                    })
-                    return <RL />
+                    return <Body />
                 }
             })()
         }

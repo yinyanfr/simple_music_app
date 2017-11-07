@@ -68,12 +68,13 @@ app.get("/searchUser/:email", (req, res) => {
 
 app.post("/newsong", (req, res) => {
     var song = new Song();
-    const {name, artist, source, link} = req.body;
+    const {name, artist, source, link, image} = req.body;
     song.sid = uuid();
     song.name = name;
     song.artist = artist;
     song.source = source;
     song.link = link;
+    song.image = image;
     Song.addSong(song)
         .then(data => {
             res.send(data)
