@@ -5,6 +5,8 @@ var {mongoose} = require("./db");
 const authenticate = require("./authenticate");
 const {pick} = require("lodash");
 const uuid = require("uuid");
+const ytsearch = require("./ytsearch");
+var cors = require("cors");
 var User = require("./user"),
     Song = require("./song"),
     Playlist = require("./playlist");
@@ -21,6 +23,7 @@ var app = express();
 // });
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.get("/api", (req, res) => {
     res.json({
@@ -239,7 +242,18 @@ app.patch("/toggleVis", authenticate, (req, res) => {
             })
 });
 
-app.use(express.static(__dirname+"/web"));
+app.get("/ytsearch/:keyword", (req, res) => {
+    const {keyword} = req.params;
+    ytsearch(keyword)
+        .then(result => {
+            res.send(result)
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
+});
+
+//app.use(express.static(__dirname+"/web"));
 
 app.listen(30706, () => {
     console.log("Test server running on 30706")
