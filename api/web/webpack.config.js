@@ -1,9 +1,4 @@
 const path = require('path');
-/**
- * 
-    "/song/**",
-    "/songlist/**"
- */
 
 module.exports = {
   entry: './index.js',
