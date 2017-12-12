@@ -6,6 +6,8 @@ import store from "./redux/configureStore";
 import api from "./lib/api";
 import testToken from "./lib/testToken";
 
+import "semantic-ui-css/semantic.min.css"
+
 
 const jsx = (
     <Provider store={store}>
