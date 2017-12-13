@@ -12,7 +12,7 @@ module.exports = {
       test: /\.js$/,
       exclude: /node_modules/
     }, {
-      test: /\.s?css$/,
+      test: /\.s?[ca]ss$/,
       use: [
         'style-loader',
         'css-loader',

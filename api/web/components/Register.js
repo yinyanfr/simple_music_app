@@ -60,6 +60,9 @@ export default class Register extends Component{
         this.setState(() => ({submitActive: false}))
         let {email, password, pseudo} = this.state;
         let body = {email, password, pseudo};
+        this.state.email = ""
+        this.state.password = ""
+        this.state.pseudo = ""
         console.log(body)
         fetch(api("register"), {
             method: "POST",
@@ -113,48 +116,103 @@ export default class Register extends Component{
         console.log("Do nothing")
     }
 
+    onCancel = e => {
+        e.preventDefault()
+        store.dispatch({
+            type: "SETPAGENAME",
+            data: {
+                pagename: "logo"
+            }
+        })
+    }
+
     render(){
         return (
             <div>
                 <h3>Register</h3>
                 <form onSubmit={this.state.submitActive? this.onSubmit : this.doNothing}>
-                    <div>
-                        <input 
+                <div className="field">
+                    <label className="label">Email</label>
+                    <div className="control has-icons-left has-icons-right">
+                        <input
+                            className={((valid) => {
+                                if(valid === 0) return "input is-danger"
+                                if(valid) return "input is-success"
+                                return "input"
+                            })(this.state.emailValid)}
                             type="text" 
                             placeholder="email" 
                             value={this.state.email}
                             onChange={this.onChangeInput("email")}
                         />
-                        <span>{(() => {
-                            if(this.state.emailValid === 0) return "Existed!";
-                            else if(this.state.emailValid === true) return "ok";
-                            else return ""
-                        })()}</span>
+                        <span className="icon is-small is-left">
+                            <i className="fa fa-envelope"></i>
+                        </span>
+                        <span className="icon is-small is-right">
+                            {((valid) => {
+                                if(valid === 0) return <i className="fa fa-warning"></i>
+                                if(valid) return <i className="fa fa-check"></i>
+                                return ""
+                            })(this.state.emailValid)}
+                        </span>
+                        {this.state.emailValid === 0 ? <p className="help is-danger">User existed</p> : ""}
                     </div>
-                    <div>
-                        <input 
-                            type="password" 
-                            placeholder="password > 6" 
-                            value={this.state.password}
-                            onChange={this.onChangeInput("password")}
-                        />
-                        <span>{this.state.passwordValid? "ok" : ""}</span>
+                </div>
+                    <div className="field">
+                        <label className="label">Password</label>
+                        <div className="control has-icons-left has-icons-right">
+                            <input 
+                                className={this.state.passwordValid? "input is-success" : "input"}
+                                type="password" 
+                                placeholder="password > 6" 
+                                value={this.state.password}
+                                onChange={this.onChangeInput("password")}
+                            />
+                            <span className="icon is-small is-left">
+                                <i className="fa fa-key"></i>
+                            </span>
+                            <span className="icon is-small is-right">
+                                {this.state.passwordValid ? <i className="fa fa-check"></i> : ""}
+                            </span>
+                        </div>
                     </div>
-                    <div>
-                        <input 
-                            type="text" 
-                            placeholder="pseudo > 4" 
-                            value={this.state.pseudo}
-                            onChange={this.onChangeInput("pseudo")}
-                        />
-                        <span>{this.state.pseudoValid? "ok" : ""}</span>
+                    <div className="field">
+                        <label className="label">Username</label>
+                        <div className="control has-icons-left has-icons-right">
+                            <input 
+                                className={((valid) => valid ? "input is-success" : "input")(this.state.pseudoValid)}
+                                type="text" 
+                                placeholder="pseudo > 4" 
+                                value={this.state.pseudo}
+                                onChange={this.onChangeInput("pseudo")}
+                            />
+                            <span className="icon is-small is-left">
+                                <i className="fa fa-user"></i>
+                            </span>
+                            <span className="icon is-small is-right">
+                                {this.state.pseudoValid ? <i className="fa fa-check"></i> : ""}
+                            </span>
+                        </div>
                     </div>
-                    <div>
-                        {
-                            ((!!this.state.emailValid) && this.state.passwordValid && this.state.pseudoValid)
-                            &&
-                            (<button>Submit</button>)
-                        }
+                    <div className="field">
+                        <div className="control">
+                        <label className="checkbox">
+                            <input type="checkbox" />
+                            &nbsp;&nbsp;I agree to the <a href="#">terms and conditions</a>
+                        </label>
+                        </div>
+                    </div>
+                    <div className="field is-grouped">
+                        <div className="control">
+                        {(() => {
+                            if((!!this.state.emailValid) && this.state.passwordValid && this.state.pseudoValid)
+                            return (<button className="button is-link">Submit</button>);
+                            return <button className="button is-link" disabled>Submit</button>
+                        })()}
+                        </div>
+                        <div className="control" onClick={this.onCancel}>
+                            <button className="button is-text">Cancel</button>
+                        </div>
                     </div>
                 </form>
             </div>

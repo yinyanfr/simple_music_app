@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {connect} from "react-redux";
 import Auth from "./components/Auth";
 import Body from "./components/Body";
+import Logopage from "./components/Logopage";
 
 const Main = props => (
     <div>
@@ -12,6 +13,8 @@ const Main = props => (
                         return <Auth />
                     case "mylist":
                         return <Body />
+                    case "logo":
+                        return <Logopage />
                     default:
                         return <Auth />
                 }
