@@ -16,7 +16,7 @@ const Main = props => (
                     case "logo":
                         return <Logopage />
                     default:
-                        return <Auth />
+                        return <Logopage />
                 }
             })()
         }

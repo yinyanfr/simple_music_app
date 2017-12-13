@@ -15,7 +15,7 @@ class RL extends Component{
         return (
             <div>
                 <div>Register and login</div>
-                <button onClick={this.onToggle}>Toggle</button>
+                <button className="button is-text" onClick={this.onToggle}>Toggle</button>
                 <div>{this.state.register ? <Register /> : <Login />}</div>
             </div>
         )

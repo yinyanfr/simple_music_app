@@ -3,6 +3,7 @@ import testReducer from "./testReducer";
 import userReducer from "./userReducer";
 import pageReducer from "./pageReducer";
 import plReducer from "./plReducer";
+import i18nReducer from "./i18nReducer";
 
 const configureStore = () => (
     createStore(
@@ -10,7 +11,8 @@ const configureStore = () => (
             txt: testReducer,
             user: userReducer,
             page: pageReducer,
-            pl: plReducer
+            pl: plReducer,
+            i18n: i18nReducer
         })
     )
 );

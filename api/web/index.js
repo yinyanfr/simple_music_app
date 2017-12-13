@@ -16,6 +16,13 @@ const jsx = (
     </Provider>
 )
 
+store.dispatch({
+    type: "CHANGELANGUAGE",
+    data: {
+        langname: "fr"
+    }
+})
+
 // Push.create("Hello world!", {
 //     body: "How's it hangin'?",
 //     icon: './high.png',

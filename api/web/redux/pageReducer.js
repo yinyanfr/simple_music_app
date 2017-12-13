@@ -1,5 +1,5 @@
 const pageDefaultState = {
-    pagename: 'auth',
+    pagename: 'logo',
     pid: "",
     sid: ""
 };
