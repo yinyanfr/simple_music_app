@@ -1,7 +1,5 @@
 import api from "./api";
 
-//const testToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImlANzMwMDAuZnIiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTA5OTk4MjY1fQ.bT-MtxrN27VgFRqLyAuZ9vQ98Do0mu0_CbmIJbMQVYQ";
-
 const verify = token => {
     var headers = new Headers();
     headers.append("x-auth", token)

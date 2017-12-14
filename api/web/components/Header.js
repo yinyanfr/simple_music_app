@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {connect} from "react-redux";
 import api from "./../lib/api";
 import store from "./../redux/configureStore";
+import Hero from "./Hero"
 
 const Header = props => {
     const onLogout = e => {
@@ -42,7 +43,7 @@ const Header = props => {
 
     return (
         <div>
-            <header>Music app, for {props.user.pseudo}</header>
+            <Hero>Music app, for {props.user.pseudo}</Hero>
             <button onClick={onLogout}>logout</button>
         </div>
     )

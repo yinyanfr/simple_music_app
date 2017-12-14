@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import {connect} from "react-redux";
 import api from "./../lib/api";
+import Hero from "./Hero"
 
 class AddPlaylist extends Component{
 
     state = {
-        name: ""
+        name: "",
+        msg: ""
     }
 
     onBack = e => {
@@ -23,6 +25,13 @@ class AddPlaylist extends Component{
             name: value
         }))
     };
+
+    onChangeMsg = e => {
+        let {value} = e.target
+        this.setState(() => ({
+            msg: value
+        }))
+    }
 
     onSubmit = e => {
         e.preventDefault();
@@ -50,7 +59,9 @@ class AddPlaylist extends Component{
         .then(() => {
             this.props.dispatch({
                 type: "SETPAGENAME",
-                data: "mylist"
+                data: {
+                    pagename: "mylist"
+                }
             })
         })
         .catch(err => {
@@ -61,18 +72,50 @@ class AddPlaylist extends Component{
     render(){
         return (
             <div>
-                <button onClick={this.onBack}>Back</button>
-                <form onSubmit={this.onSubmit}>
-                    <div>
+                <Hero>Add new playlist</Hero>
+                <div className="field">
+                    <label className="label">Name</label>
+                    <div className="control has-icons-right">
                         <input 
+                            className={this.state.name.length > 2 ? "input is-success" : "input"} 
                             type="text" 
-                            placeholder="name" 
+                            placeholder="Name of Playlist > 2"
                             value={this.state.name}
-                            onChange={this.onChangeName}
+                            onChange={this.onChangeName} 
                         />
+                        <span className="icon is-small is-right">
+                            {this.state.name.length > 2 ? <i className="fa fa-check"></i> : ""}
+                        </span>
                     </div>
-                    <button>Submit</button>
-                </form>
+                </div>
+
+                <div className="field">
+                    <label className="label">Message</label>
+                    <div className="control">
+                        <textarea 
+                            className="textarea" 
+                            placeholder="Description"
+                            value={this.state.msg}
+                            onChange={this.onChangeMsg } 
+                        >
+                        </textarea>
+                    </div>
+                </div>
+
+                <div className="field is-grouped">
+                    <div className="control">
+                        {((valid) => {
+                            if(valid){
+                                return <button className="button is-link" onClick={this.onSubmit}>Submit</button>
+                            }else{
+                                return <button className="button is-link" disabled>Submit</button>
+                            }
+                        })(this.state.name.length > 2)}
+                    </div>
+                    <div className="control">
+                        <button className="button is-text" onClick={this.onBack}>Cancel</button>
+                    </div>
+                </div>
             </div>
         )
     }
