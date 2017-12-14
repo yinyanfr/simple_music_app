@@ -16,7 +16,7 @@ const Header = props => {
                    return Promise.reject("logout failed")
                }else {
                    sessionStorage.removeItem("token");
-                   props.dispatch(
+                   store.dispatch(
                         {
                             type: "DELETEUSER"
                         }
@@ -24,11 +24,11 @@ const Header = props => {
                }
             })
             .then(() => {
-                props.dispatch(
+                store.dispatch(
                     {
                         type: "SETPAGEALL",
                         data: {
-                            pagename: "auth",
+                            pagename: "logopage",
                             pid: "",
                             sid: ""
                         }

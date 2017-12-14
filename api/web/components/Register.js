@@ -129,7 +129,6 @@ export default class Register extends Component{
     render(){
         return (
             <div>
-                <h3>Register</h3>
                 <form onSubmit={this.state.submitActive? this.onSubmit : this.doNothing}>
                 <div className="field">
                     <label className="label">Email</label>

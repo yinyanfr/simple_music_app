@@ -112,7 +112,6 @@ export default class Login extends Component{
     render(){
         return (
             <div>
-                <h3>Login</h3>
                 <form onSubmit={this.state.submitActive? this.onSubmit : this.doNothing}>
                     <div className="field">
                         <label className="label">Email</label>

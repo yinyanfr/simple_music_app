@@ -1,0 +1,18 @@
+#logopage{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    align-content: space-between;
+}
+
+.logged-buttons{
+    display: flex;
+    flex-direction: column;
+}
+
+#rl{
+    padding: 10px;
+}
+

@@ -3,8 +3,8 @@ const Hero = props => (
     <section className="hero">
         <div className="hero-body">
             <div className="container">
-                <h1 className="title">{props.title}</h1>
-                <h2 className="subtitle">{props.subtitle}</h2>
+                <h1 className="title">{props.title || props.children || ""}</h1>
+                <h2 className="subtitle">{props.subtitle || ""}</h2>
             </div>
         </div>
     </section>
