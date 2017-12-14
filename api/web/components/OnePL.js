@@ -37,7 +37,7 @@ class OnePL extends Component{
                 this.props.dispatch({
                     type: "REFRESHPL",
                     data: obj
-                })
+                });
             })
             .catch(err => {
                 console.log(err)
@@ -50,11 +50,27 @@ class OnePL extends Component{
 
     render(){
         return (
-            <div>
-                <div>{this.pl.name}</div>
-                <button>Enter</button>
-                <button onClick={this.onDelete}>Delete</button>
+            <div className="card onepl">
+                <header className="card-header">
+                    <p className="card-header-title">
+                        {this.pl.name}
+                    </p>
+                </header>
+                <div className="card-content">
+                    <div className="content">
+                        {this.pl.msg || "No Description."}
+                    </div>
+                </div>
+                <footer className="card-footer">
+                    <a href="#" className="card-footer-item">Enter</a>
+                    <a href="#" className="card-footer-item" onClick={this.onDelete}>Delete</a>
+                </footer>
             </div>
+            // <div>
+            //     <div>{this.pl.name}</div>
+            //     <button>Enter</button>
+            //     <button onClick={this.onDelete}>Delete</button>
+            // </div>
         )
     }
 }

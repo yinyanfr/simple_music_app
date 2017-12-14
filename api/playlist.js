@@ -23,6 +23,9 @@ var playlistSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    msg:{
+        type: String
+    },
     songs:[
         {
             sid:{

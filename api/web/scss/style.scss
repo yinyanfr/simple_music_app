@@ -12,6 +12,19 @@
     flex-direction: column;
 }
 
+.pls{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: space-between;
+}
+
+.onepl{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 body{
     padding: 15px;
 }

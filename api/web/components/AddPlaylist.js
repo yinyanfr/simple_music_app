@@ -35,7 +35,7 @@ class AddPlaylist extends Component{
 
     onSubmit = e => {
         e.preventDefault();
-        const {name} = this.state;
+        const {name, msg} = this.state;
         fetch(api("newplaylist"), {
             method: "POST",
             headers: new Headers({
@@ -43,7 +43,8 @@ class AddPlaylist extends Component{
                 "x-auth": this.props.user.token
             }),
             body: JSON.stringify({
-                name
+                name,
+                msg
             })
         })
         .then(response => {

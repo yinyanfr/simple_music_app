@@ -129,11 +129,12 @@ app.delete("/logout", authenticate ,(req, res) => {
 
 app.post("/newplaylist", authenticate, (req, res) => {
     var pl = new Playlist();
-    const {name, isPrivate} = req.body;
+    const {name, isPrivate, msg} = req.body;
     pl.pid = uuid();
     pl.creator = req.user.toObject().email;
     pl.name = name;
-    pl.isPrivate = isPrivate
+    pl.isPrivate = isPrivate;
+    pl.msg = msg;
     pl.save().then(data => {
         res.send(data);
     }, err => {

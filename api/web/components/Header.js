@@ -42,10 +42,23 @@ const Header = props => {
     };
 
     return (
-        <div>
-            <Hero>Music app, for {props.user.pseudo}</Hero>
-            <button onClick={onLogout}>logout</button>
-        </div>
+        // <div>
+        //     <Hero>Music app, for {props.user.pseudo}</Hero>
+        //     <button onClick={onLogout}>logout</button>
+        // </div>
+
+        <nav className="navbar" role="navigation" aria-label="main navigation">
+            <div className="navbar-brand">
+                <a className="navbar-item" href="#">
+                    <img src="./../high.png" alt="Listen, together" width="28" height="28" />
+                </a>
+                <button className="button navbar-burger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
     )
 }
 
