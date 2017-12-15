@@ -17,6 +17,10 @@ export default (state = plDefaultState, action) => {
             return [...state, action.data];
         case "DELETEPLONE":
             return findPlAndDelete(action.pid, state);
+        case "SHIFTPLONE":
+            state.shift();
+            console.log(state);
+            return state
         case "ADDPLALL":
             return [...state, ...action.data];
         case "REFRESHPL":

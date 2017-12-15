@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import store from "./../redux/configureStore";
 import Hero from "./Hero"
 import testToken from "./../lib/testToken";
+import Nav from "./Nav";
 
 class Logopage extends Component{
 
@@ -137,28 +138,31 @@ class Logopage extends Component{
 
     render(){
         return (
-            <div id="logopage">
-                <Hero title="Music Player" subtitle="listen, together" />
-                {(() => {
-                    if(this.state.loading){
-                        return <button className="button is-primary start-button is-loading" onClick={this.onStart}>{this.state.startButton}</button>
-                    }else{
-                        if(this.state.username){
-                            return (
-                                <div className="control logged-buttons">
-                                    <button className="button is-primary start-button" onClick={this.onStart}>{`Welcome Back, ${this.state.username}`}</button>
-                                    <button className="button is-text" onClick={this.onNotYou}>Not you?</button>
-                                </div>
-                            )
+            <div>
+                <Nav>Music Player</Nav>
+                <div id="logopage">
+                    <Hero title="Music Player" subtitle="listen, together" />
+                    {(() => {
+                        if(this.state.loading){
+                            return <button className="button is-primary start-button is-loading" onClick={this.onStart}>{this.state.startButton}</button>
                         }else{
-                            return (
-                                <div className="control">
-                                    <button className="button is-primary start-button" onClick={this.onStart}>{`Welcome, let's get started.`}</button>
-                                </div>
-                            )
+                            if(this.state.username){
+                                return (
+                                    <div className="control logged-buttons">
+                                        <button className="button is-primary start-button" onClick={this.onStart}>{`Continue as ${this.state.username}`}</button>
+                                        <button className="button is-text" onClick={this.onNotYou}>Not you?</button>
+                                    </div>
+                                )
+                            }else{
+                                return (
+                                    <div className="control">
+                                        <button className="button is-primary start-button" onClick={this.onStart}>{`Welcome, let's get started.`}</button>
+                                    </div>
+                                )
+                            }
                         }
-                    }
-                })()}
+                    })()}
+                </div>
             </div>
         )
     }

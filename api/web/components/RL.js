@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Register from "./Register";
 import Login from "./Login";
 import Hero from "./Hero";
+import Nav from "./Nav";
 
 class RL extends Component{
     state = {
@@ -33,7 +34,7 @@ class RL extends Component{
     render(){
         return (
             <div id="rl">
-                <Hero>Register and Login</Hero>
+                <Nav>Register and Login</Nav>
                 <div className="tabs">
                     <ul>
                         <li 
@@ -50,7 +51,7 @@ class RL extends Component{
                         </li>
                     </ul>
                 </div>
-                <div>{this.state.register ? <Register /> : <Login />}</div>
+                <div className="zi-panel">{this.state.register ? <Register /> : <Login />}</div>
             </div>
         )
     }

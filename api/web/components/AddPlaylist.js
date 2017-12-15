@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {connect} from "react-redux";
 import api from "./../lib/api";
 import Hero from "./Hero"
+import Nav from "./Nav"
 
 class AddPlaylist extends Component{
 
@@ -36,6 +37,12 @@ class AddPlaylist extends Component{
     onSubmit = e => {
         e.preventDefault();
         const {name, msg} = this.state;
+        this.setState(() => (
+            {
+                name: "",
+                msg: ""
+            }
+        ))
         fetch(api("newplaylist"), {
             method: "POST",
             headers: new Headers({
@@ -73,48 +80,50 @@ class AddPlaylist extends Component{
     render(){
         return (
             <div>
-                <Hero>Add new playlist</Hero>
-                <div className="field">
-                    <label className="label">Name</label>
-                    <div className="control has-icons-right">
-                        <input 
-                            className={this.state.name.length > 2 ? "input is-success" : "input"} 
-                            type="text" 
-                            placeholder="Name of Playlist > 2"
-                            value={this.state.name}
-                            onChange={this.onChangeName} 
-                        />
-                        <span className="icon is-small is-right">
-                            {this.state.name.length > 2 ? <i className="fa fa-check"></i> : ""}
-                        </span>
+                <Nav>Add new playlist</Nav>
+                <div className="zi-panel">
+                    <div className="field">
+                        <label className="label">Name</label>
+                        <div className="control has-icons-right">
+                            <input 
+                                className={this.state.name.length > 2 ? "input is-success" : "input"} 
+                                type="text" 
+                                placeholder="Name of Playlist > 2"
+                                value={this.state.name}
+                                onChange={this.onChangeName} 
+                            />
+                            <span className="icon is-small is-right">
+                                {this.state.name.length > 2 ? <i className="fa fa-check"></i> : ""}
+                            </span>
+                        </div>
                     </div>
-                </div>
 
-                <div className="field">
-                    <label className="label">Message</label>
-                    <div className="control">
-                        <textarea 
-                            className="textarea" 
-                            placeholder="Description"
-                            value={this.state.msg}
-                            onChange={this.onChangeMsg } 
-                        >
-                        </textarea>
+                    <div className="field">
+                        <label className="label">Message</label>
+                        <div className="control">
+                            <textarea 
+                                className="textarea" 
+                                placeholder="Description"
+                                value={this.state.msg}
+                                onChange={this.onChangeMsg } 
+                            >
+                            </textarea>
+                        </div>
                     </div>
-                </div>
 
-                <div className="field is-grouped">
-                    <div className="control">
-                        {((valid) => {
-                            if(valid){
-                                return <button className="button is-link" onClick={this.onSubmit}>Submit</button>
-                            }else{
-                                return <button className="button is-link" disabled>Submit</button>
-                            }
-                        })(this.state.name.length > 2)}
-                    </div>
-                    <div className="control">
-                        <button className="button is-text" onClick={this.onBack}>Cancel</button>
+                    <div className="field is-grouped">
+                        <div className="control">
+                            {((valid) => {
+                                if(valid){
+                                    return <button className="button is-link" onClick={this.onSubmit}>Submit</button>
+                                }else{
+                                    return <button className="button is-link" disabled>Submit</button>
+                                }
+                            })(this.state.name.length > 2)}
+                        </div>
+                        <div className="control">
+                            <button className="button is-text" onClick={this.onBack}>Cancel</button>
+                        </div>
                     </div>
                 </div>
             </div>

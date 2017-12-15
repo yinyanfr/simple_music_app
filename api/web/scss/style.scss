@@ -25,7 +25,25 @@
     margin-bottom: 10px;
 }
 
-body{
-    padding: 15px;
+.main-burger{
+    text-align: right;
 }
 
+.add-pl{
+    height: 150%;
+    margin-top: 5px;
+}
+
+.zi-panel{
+    padding: 0 15px;
+}
+
+nav{
+    box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+    margin-bottom: 10px;
+}
+
+.navbar-burger{
+    border: none;
+    background-color: white;
+}

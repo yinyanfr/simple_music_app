@@ -4,12 +4,17 @@ import api from "./../lib/api";
 import store from "./../redux/configureStore";
 import Hero from "./Hero"
 
-const Header = props => {
-    const onLogout = e => {
+class Header extends Component {
+
+    state = {
+        burger: false
+    }
+
+    onLogout = e => {
         fetch(api("logout"), {
             method: "DELETE",
             headers: new Headers({
-                "x-auth": props.user.token
+                "x-auth": this.props.user.token
             })
         })
             .then(response => {
@@ -41,25 +46,42 @@ const Header = props => {
             })
     };
 
-    return (
-        // <div>
-        //     <Hero>Music app, for {props.user.pseudo}</Hero>
-        //     <button onClick={onLogout}>logout</button>
-        // </div>
+    onBurgerToggle = e => {
+        e.preventDefault();
+        this.setState(prev => (
+            {
+                burger: !prev.burger
+            }
+        ))
+    }
 
-        <nav className="navbar" role="navigation" aria-label="main navigation">
-            <div className="navbar-brand">
-                <a className="navbar-item" href="#">
-                    <img src="./../high.png" alt="Listen, together" width="28" height="28" />
-                </a>
-                <button className="button navbar-burger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-        </nav>
-    )
+    render(){
+        return (
+            <nav className="navbar" role="navigation" aria-label="main navigation">
+                <div className="navbar-brand">
+                    <a className="navbar-item" href="#">
+                        <img src="./../high.png" alt="Listen, together" width="28" height="28" />
+                    </a>
+                    <span className="navbar-item">Music player for {this.props.user.pseudo}</span>
+                    <button
+                        className={this.state.burger ? "button navbar-burger is-active" : "button navbar-burger"} 
+                        onClick={this.onBurgerToggle}
+                    >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+                <div 
+                    className={this.state.burger ? "navbar-menu is-active" : "navbar-menu"}
+                >
+                    <div className="navbar-end main-burger">
+                        <a className="navbar-item" href="#" onClick={this.onLogout}>logout</a>
+                    </div>
+                </div>
+            </nav>
+        )
+    }
 }
 
 const mapStatetoProps = state => (
