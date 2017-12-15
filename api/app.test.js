@@ -448,14 +448,12 @@ describe("DELETE /deletepl to delete a playlist created by user", () => {
                     .set("x-auth", token)
                     .send({pid})
                     .expect(200)
-                    .expect(res => {
-                        expect(res.body.pid).toBe(pid)
-                    })
                     .end((err, res) => {
                         if(err) return done(err);
                         Playlist.findOne({pid})
                                 .then(pl => {
-                                    expect(pl).toBeFalsy();
+                                    expect(pl).toBeTruthy();
+                                    expect(pl.creator).toBe("nobody");
                                     done();
                                 })
                                 .catch(err => done(err))
@@ -505,53 +503,126 @@ describe("PATCH /toggleVis to toggle visuabilty of a playlist created by its use
     })
 });
 
-describe(`GET /songlist/:pid to every song in a playlist by its pid, 
-authentification is required should the playlist be private`, () => {
-    it("should list every song in a playlist public", done => {
-        return testNewPl(done, (token, pid) => {
+describe("PATCH /pllistened/:pid", () => {
+    it("should increase 1 listenedTimes", done => {
+        testNewPl(done, (token, pid) => {
             request(app)
-                .get(`/songlist/${pid}`)
+                .patch(`/pllistened/${pid}`)
                 .expect(200)
                 .end((err, res) => {
-                    if(err) return done(err);
+                    if(err) return done(err)
                     Playlist.findOne({pid})
-                            .then(pl => {
-                                expect(isEqual(res.body, pl.songs)).toBe(true);
-                                done();
-                            })
-                            .catch(err => done(err))
+                                .then(pl => {
+                                    expect(pl).toBeTruthy();
+                                    expect(pl.listenedTimes).toBe(1);
+                                    done()
+                                })
+                                .catch(err => done(err))
                 })
-        })
-    });
-
-    it("should work for a private playlist with authentification", done => {
-        return testToggle(done, (token, pid) => {
-            request(app)
-                .get(`/songlist/${pid}`)
-                .set("x-auth", token)
-                .expect(200)
-                .end((err, res) => {
-                    if(err) return done(err);
-                    Playlist.findOne({pid})
-                            .then(pl => {
-                                expect(isEqual(res.body, pl.songs)).toBe(true);
-                                done();
-                            })
-                            .catch(err => done(err))
-                })
-        })
-    });
-
-    it("should go 401 for a private playlist without proper authentification", done => {
-        return testToggle(done, (token, pid) => {
-            request(app)
-                .get(`/songlist/${pid}`)
-                .set("x-auth", token+"1")
-                .expect(401)
-                .end(done)
         })
     })
 })
+
+describe("PATCH /plshared/:pid", () => {
+    it("should increase 1 sharedTimes", done => {
+        testNewPl(done, (token, pid) => {
+            request(app)
+                .patch(`/plshared/${pid}`)
+                .expect(200)
+                .end((err, res) => {
+                    if(err) return done(err)
+                    Playlist.findOne({pid})
+                                .then(pl => {
+                                    expect(pl).toBeTruthy();
+                                    expect(pl.sharedTimes).toBe(1);
+                                    done()
+                                })
+                                .catch(err => done(err))
+                })
+        })
+    })
+})
+
+const modifiedpl = {
+    name: "modified",
+    msg: "this is modified",
+    isPrivate: true
+}
+
+describe("POST /modifypl", () => {
+    const {name, msg, isPrivate} = modifiedpl
+    it("should modify playlist when authorized", done => {
+        testNewPl(done, (token, pid) => {
+            request(app)
+                .post("/modifypl")
+                .set("x-auth", token)
+                .send({pid, name, msg, isPrivate})
+                .expect(200)
+                .end((err, res) => {
+                    if(err) return done(err);
+                    Playlist.findOne({pid})
+                        .then(pl => {
+                            expect(pl).toBeTruthy();
+                            expect(pl.name).toBe(name);
+                            expect(pl.msg).toBe(msg);
+                            expect(pl.isPrivate).toBe(isPrivate);
+                            done()
+                        })
+                        .catch(err => done(err))
+                })
+        })
+    })
+})
+
+// API Removed
+
+// describe(`GET /songlist/:pid to every song in a playlist by its pid, 
+// authentification is required should the playlist be private`, () => {
+//     it("should list every song in a playlist public", done => {
+//         return testNewPl(done, (token, pid) => {
+//             request(app)
+//                 .get(`/songlist/${pid}`)
+//                 .expect(200)
+//                 .end((err, res) => {
+//                     if(err) return done(err);
+//                     Playlist.findOne({pid})
+//                             .then(pl => {
+//                                 expect(isEqual(res.body, pl)).toBe(true);
+//                                 done();
+//                             })
+//                             .catch(err => done(err))
+//                 })
+//         })
+//     });
+
+//     it("should work for a private playlist with authentification", done => {
+//         return testToggle(done, (token, pid) => {
+//             request(app)
+//                 .get(`/songlist/${pid}`)
+//                 .set("x-auth", token)
+//                 .expect(200)
+//                 .end((err, res) => {
+//                     if(err) return done(err);
+//                     Playlist.findOne({pid})
+//                             .then(pl => {
+//                                 expect(isEqual(res.body, pl.songs)).toBe(true);
+//                                 done();
+//                             })
+//                             .catch(err => done(err))
+//                 })
+//         })
+//     });
+
+//     it("should go 401 for a private playlist without proper authentification", done => {
+//         return testToggle(done, (token, pid) => {
+//             request(app)
+//                 .get(`/songlist/${pid}`)
+//                 .set("x-auth", token+"1")
+//                 .expect(401)
+//                 .end(done)
+//         })
+//     })
+// })
 
 
 

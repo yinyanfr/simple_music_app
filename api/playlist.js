@@ -19,6 +19,24 @@ var playlistSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    createdAt:{
+        type: String
+    },
+    isShared:{
+        type: Boolean,
+        default: false
+    },
+    sharedFromPid:{
+        type: String
+    },
+    sharedTimes:{
+        type: Number,
+        default: 0
+    },
+    listenedTimes:{
+        type: Number,
+        default: 0
+    },
     isPrivate:{
         type: Boolean,
         default: false
@@ -52,6 +70,7 @@ playlistSchema.methods.addSong = function (sid) {
 playlistSchema.methods.removeSong = function (sid) {
     var playlist = this;
     return 
-}
+};
+
 
 module.exports = mongoose.model("playlist", playlistSchema);

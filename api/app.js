@@ -174,10 +174,15 @@ app.get("/mylist", authenticate, (req, res) => {
 
 app.delete("/deletepl", authenticate, (req, res) => {
     const {pid} = req.body;
-    Playlist.findOneAndRemove({pid, creator: req.user.toObject().email})
-            .then(data => {
-                console.log(data)
-                res.send(data)
+    Playlist.findOne({pid, creator: req.user.toObject().email})
+            .then(pl => {
+                pl.update({$set: {creator: "nobody"}})
+                    .then(data => {
+                        res.send(data)
+                    })
+                    .catch(err => {
+                        res.status(400).send(err)
+                    })
             })
             .catch(err => {
                 res.status(400).send(err)
@@ -265,6 +270,74 @@ app.patch("/toggleVis", authenticate, (req, res) => {
                 console.log(err)
                 res.status(400).send(err)
             })
+});
+
+app.patch("/pllistened/:pid", (req, res) => {
+    const {pid} = req.params;
+    Playlist.findOne({pid})
+        .then(pl => {
+            if(!pl) res.status(404).send("Playlist not found");
+            pl.update(
+                {$inc: {listenedTimes: 1}}
+            )
+            .then(data => {
+                res.send(data)
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).send(err)
+            })
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).send(err)
+        })
+});
+
+app.patch("/plshared/:pid", (req, res) => {
+    const {pid} = req.params;
+    Playlist.findOne({pid})
+        .then(pl => {
+            if(!pl) res.status(404).send("Playlist not found");
+            pl.update(
+                {$inc: {sharedTimes: 1}}
+            )
+            .then(data => {
+                res.send(data)
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).send(err)
+            })
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).send(err)
+        })
+});
+
+app.post("/modifypl", authenticate, (req, res) => {
+    const {pid, name, msg, isPrivate} = req.body
+    Playlist.findOne({pid})
+        .then(pl => {
+            if(!pl) res.status(404).send("playlist not found");
+            else{
+                pl.update({$set: {
+                    name,
+                    msg,
+                    isPrivate
+                }})
+                    .then(data => {
+                        res.send(data)
+                    })
+                    .catch(err => {
+                        res.status(400).send(err)
+                    })
+            }
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
 });
 
 app.get("/ytsearch/:keyword", (req, res) => {
