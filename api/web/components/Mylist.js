@@ -71,7 +71,7 @@ class Mylist extends Component{
         console.log("pl", this.props.pl)
         return (
             <div>
-                <div className="tabs">
+                <div className="tabs list-tab">
                     <ul>
                         <li 
                             className={this.props.page.pagename === "mylist" ? "is-active" : ""}

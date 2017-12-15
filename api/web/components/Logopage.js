@@ -142,6 +142,7 @@ class Logopage extends Component{
                 <Nav>Music Player</Nav>
                 <div id="logopage">
                     <Hero title="Music Player" subtitle="listen, together" />
+                    <img src="./../high.png" className="logopic" />
                     {(() => {
                         if(this.state.loading){
                             return <button className="button is-primary start-button is-loading" onClick={this.onStart}>{this.state.startButton}</button>

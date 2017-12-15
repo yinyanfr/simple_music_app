@@ -221,6 +221,30 @@ app.get("/songlist/:pid", (req, res) => {
             })
 });
 
+app.get("/pl/:pid", (req, res) => {
+    const {pid} = req.params;
+    Playlist.findOne({pid})
+            .then(pl => {
+                if(!pl) return Promise.reject("playlist not found");
+                if(pl.isPrivate){
+                    let token = req.header("x-auth");
+                    getAuth(token)
+                        .then(user => {
+                            if(user.email !== pl.creator) return Promise.reject("Authentification failed");
+                            res.send(pl)
+                        })
+                        .catch(err => {
+                            res.status(401).send(err)
+                        })
+                }else{
+                    res.send(pl)
+                }
+            })
+            .catch(err => {
+                res.status(404).send(err)
+            })
+})
+
 app.patch("/toggleVis", authenticate, (req, res) => {
     const {pid} = req.body;
     Playlist.findOne({pid, creator: req.user.toObject().email})

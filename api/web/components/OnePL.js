@@ -76,6 +76,18 @@ class OnePL extends Component{
         ))
     }
 
+    onEnter = e => {
+        e.preventDefault()
+        let {pid} = this.pl
+        store.dispatch({
+            type: "SETPAGEALL",
+            data: {
+                pagename: "playlist",
+                pid
+            }
+        })
+    }
+
     render(){
         return (
             <div className="card onepl">
@@ -95,7 +107,7 @@ class OnePL extends Component{
                     </div>
                 </div>
                 <footer className="card-footer">
-                    <a href="#" className="card-footer-item">Enter</a>
+                    <a href="#" className="card-footer-item" onClick={this.onEnter}>Enter</a>
                 </footer>
                 <div className={this.state.deleteModal ? "modal is-active" : "modal"}>
                     <div className="modal-background"></div>
