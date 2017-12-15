@@ -7,8 +7,17 @@ class OnePL extends Component{
 
     pl = this.props.children
 
+    state = {
+        deleteModal: false
+    }
+
     onDelete = e => {
         e.preventDefault();
+        this.setState(() => (
+            {
+                deleteModal: false
+            }
+        ))
         fetch(api("deletepl"), {
             method: "DELETE",
             headers: new Headers({
@@ -49,6 +58,24 @@ class OnePL extends Component{
         })
     }
 
+    onOpenDelete = e => {
+        e.preventDefault()
+        this.setState(() => (
+            {
+                deleteModal: true
+            }
+        ))
+    }
+
+    onCloseDelete = e => {
+        e.preventDefault()
+        this.setState(() => (
+            {
+                deleteModal: false
+            }
+        ))
+    }
+
     render(){
         return (
             <div className="card onepl">
@@ -56,6 +83,11 @@ class OnePL extends Component{
                     <p className="card-header-title">
                         {this.pl.name}
                     </p>
+                    <a href="#" className="card-header-icon" aria-label="more options" onClick={this.onOpenDelete}>
+                        <span className="icon">
+                            <i className="fa fa-close" aria-hidden="true"></i>
+                        </span>
+                    </a>
                 </header>
                 <div className="card-content">
                     <div className="content">
@@ -64,8 +96,25 @@ class OnePL extends Component{
                 </div>
                 <footer className="card-footer">
                     <a href="#" className="card-footer-item">Enter</a>
-                    <a href="#" className="card-footer-item" onClick={this.onDelete}>Delete</a>
                 </footer>
+                <div className={this.state.deleteModal ? "modal is-active" : "modal"}>
+                    <div className="modal-background"></div>
+                    <div className="modal-card">
+                        <header className="modal-card-head">
+                            <p className="modal-card-title">Are you sure?</p>
+                            <button className="delete" aria-label="close" onClick={this.onCloseDelete}></button>
+                        </header>
+                        <section className="modal-card-body">
+                            Are you sure that you want to delete {this.pl.name}?
+                            <br />
+                            This operation cannot be reversed.
+                        </section>
+                        <footer className="modal-card-foot">
+                            <button className="button is-danger" onClick={this.onDelete}>Delete</button>
+                            <button className="button is-text" onClick={this.onCloseDelete}>Cancel</button>
+                        </footer>
+                    </div>
+                </div>
             </div>
             // <div>
             //     <div>{this.pl.name}</div>

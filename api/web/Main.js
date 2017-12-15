@@ -16,6 +16,8 @@ const Main = props => (
                         return <Auth />
                     case "mylist":
                         return <Body />
+                    case "collection":
+                        return <Body />
                     case "logo":
                         return <Logopage />
                     case "addplaylist":

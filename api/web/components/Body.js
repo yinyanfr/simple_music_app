@@ -4,6 +4,7 @@ import Header from "./Header";
 import Mylist from "./Mylist";
 import AddPlaylist from "./AddPlaylist";
 import api from "./../lib/api";
+import Collection from "./Collection"
  
 class Body extends Component{
 
@@ -18,9 +19,8 @@ class Body extends Component{
                             switch (this.props.page.pagename) {
                                 case "mylist":
                                     return <Mylist />
-                                case "addplaylist":
-                                    return <AddPlaylist />
-                            
+                                case "collection":
+                                    return <Collection />
                                 default:
                                     return <Mylist />
                             }
