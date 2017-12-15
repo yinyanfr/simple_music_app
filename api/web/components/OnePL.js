@@ -93,7 +93,7 @@ class OnePL extends Component{
             <div className="card onepl">
                 <header className="card-header">
                     <p className="card-header-title">
-                        {this.pl.name}
+                        {this.pl.isPrivate ? <i className="fa fa-lock" aria-hidden="true"></i> : ""}&nbsp;&nbsp;{this.pl.name}
                     </p>
                     <a href="#" className="card-header-icon" aria-label="more options" onClick={this.onOpenDelete}>
                         <span className="icon">

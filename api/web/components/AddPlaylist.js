@@ -8,7 +8,8 @@ class AddPlaylist extends Component{
 
     state = {
         name: "",
-        msg: ""
+        msg: "",
+        privateChecked: false
     }
 
     onBack = e => {
@@ -36,7 +37,9 @@ class AddPlaylist extends Component{
 
     onSubmit = e => {
         e.preventDefault();
-        const {name, msg} = this.state;
+        const {name, msg, privateChecked} = this.state;
+        const {token, email} = this.props.user
+        console.log(token, email)
         this.setState(() => (
             {
                 name: "",
@@ -47,11 +50,13 @@ class AddPlaylist extends Component{
             method: "POST",
             headers: new Headers({
                 "Content-Type": "application/json",
-                "x-auth": this.props.user.token
+                "x-auth": token
             }),
             body: JSON.stringify({
+                creator: email,
                 name,
-                msg
+                msg,
+                isPrivate: privateChecked
             })
         })
         .then(response => {
@@ -75,6 +80,12 @@ class AddPlaylist extends Component{
         .catch(err => {
             console.log(err)
         })
+    }
+
+    onCheckPrivate = e => {
+        this.setState(prev => ({
+            privateChecked: !prev.privateChecked
+        }))
     }
 
     render(){
@@ -105,9 +116,18 @@ class AddPlaylist extends Component{
                                 className="textarea" 
                                 placeholder="Description"
                                 value={this.state.msg}
-                                onChange={this.onChangeMsg } 
+                                onChange={this.onChangeMsg} 
                             >
                             </textarea>
+                        </div>
+                    </div>
+
+                    <div className="field">
+                        <div className="control">
+                            <label className="checkbox">
+                                <input type="checkbox" checked={this.state.privateChecked} onClick={this.onCheckPrivate} />
+                                &nbsp;&nbsp;make this playlist private
+                            </label>
                         </div>
                     </div>
 

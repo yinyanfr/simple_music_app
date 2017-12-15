@@ -17,7 +17,13 @@ class Playlist extends Component{
             }))
         }
         let {pid} = this.props
-        fetch(api(`pl/${pid}`))
+        const {token} = this.props.user
+        fetch(api(`pl/${pid}`), {
+            method: "GET",
+            headers: new Headers({
+                "x-auth": token
+            })
+        })
             .then(response => {
                 if(response.status >= 400) return Promise.reject("not found");
                 return response.json()
@@ -35,6 +41,16 @@ class Playlist extends Component{
             })
     }
 
+    onClose = e => {
+        e.preventDefault()
+        store.dispatch({
+            type: "SETPAGEALL",
+            data: {
+                pagename: "mylist"
+            }
+        })
+    }
+
     render(){
         return (
             <div>
@@ -43,8 +59,12 @@ class Playlist extends Component{
                         <a className="navbar-item" href="#">
                             <img src="./../high.png" alt="Listen, together" width="28" height="28" />
                         </a>
-                        <span className="navbar-item">Playlist</span>
-                        <button className="delete"></button>
+                        <span className="navbar-item">{this.state.pl.isPrivate ? <i className="fa fa-lock" aria-hidden="true"></i> : ""}&nbsp;&nbsp;Playlist</span>
+                        <button className="button navbar-burger is-active" onClick={this.onClose}>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
                     </div>
                 </nav>
                 {(() => {

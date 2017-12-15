@@ -7,10 +7,11 @@ import OnePL from "./OnePL";
 class Mylist extends Component{
 
     componentDidMount = e => {
+        const {token} = this.props.user
         fetch(api("mylist"), {
             method: "GET",
             headers: new Headers({
-                "x-auth": this.props.user.token
+                "x-auth": token
             })
         })
         .then(response => {
@@ -85,7 +86,7 @@ class Mylist extends Component{
                         >
                             <a>Collections</a>
                         </li>
-                        <button className="button is-primary add-pl" onClick={this.onAddPlaylist}>Add Playlist</button>
+                        <button className="button is-primary is-pulled-right add-pl" onClick={this.onAddPlaylist}>Add Playlist</button>
                     </ul>
                 </div>
                 <div className="pls zi-panel">

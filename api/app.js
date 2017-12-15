@@ -3,7 +3,7 @@ const express = require("express"),
 const path = require("path");
 var {mongoose} = require("./db");
 const authenticate = require("./authenticate");
-const {pick} = require("lodash");
+const {pick, reverse} = require("lodash");
 const uuid = require("uuid");
 const ytsearch = require("./ytsearch");
 var cors = require("cors");
@@ -168,7 +168,7 @@ app.get("/mylist", authenticate, (req, res) => {
     const {email} = req.user.toObject();
     Playlist.find({creator: email})
         .then(pls => {
-            res.send(pls)
+            res.send(reverse(pls))
         })
 })
 
@@ -207,7 +207,7 @@ app.get("/songlist/:pid", (req, res) => {
                     getAuth(token)
                         .then(user => {
                             if(user.email !== pl.creator) return Promise.reject("Authentification failed");
-                            res.send(pl.songs)
+                            res.send(pl)
                         })
                         .catch(err => {
                             res.status(401).send(err)
