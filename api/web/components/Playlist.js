@@ -77,6 +77,16 @@ class Playlist extends Component{
         }))
     }
 
+    onAddSong = e => {
+        e.preventDefault()
+        store.dispatch({
+            type: "SETPAGENAME",
+            data: {
+                pagename: "addsong"
+            }
+        })
+    }
+
     render(){
         var thispl = this;
         return (
@@ -110,12 +120,15 @@ class Playlist extends Component{
                                         className={thispl.state.innerpage === "setting" ? "is-active" : ""}
                                         onClick={thispl.onSetting} 
                                     >
-                                        <a>Setting</a>
+                                        <a>Modify</a>
                                     </li>
                                 )
                             }
                         })(this.state.pl.creator === thispl.props.user.email)}
-                        <button className="button is-primary is-pulled-right add-pl" onClick={this.onAddPlaylist}>Add Song</button>
+                        {this.state.innerpage === "songs"
+                            ? <button className="button is-primary is-pulled-right add-pl" onClick={this.onAddSong}>Add Song</button>
+                            : ""
+                        }
                     </ul>
                 </div>
                 <div className="zi-panel">
