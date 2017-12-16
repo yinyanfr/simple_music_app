@@ -48,6 +48,12 @@ class OnePL extends Component{
                     type: "REFRESHPL",
                     data: obj
                 });
+                store.dispatch({
+                    type: "SETPAGENAME",
+                    data: {
+                        pagename: "mylist"
+                    }
+                })
             })
             .catch(err => {
                 console.log(err)

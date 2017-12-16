@@ -4,6 +4,7 @@ import api from "./../lib/api";
 import store from "./../redux/configureStore"
 import Songlist from "./Songlist"
 import Detail from "./Detail"
+import Modifypl from "./Modifypl"
 
 class Playlist extends Component{
 
@@ -47,7 +48,7 @@ class Playlist extends Component{
     onClose = e => {
         e.preventDefault()
         store.dispatch({
-            type: "SETPAGEALL",
+            type: "SETPAGENAME",
             data: {
                 pagename: "mylist"
             }
@@ -79,7 +80,7 @@ class Playlist extends Component{
         var thispl = this;
         return (
             <div>
-                <nav className="navbar" role="navigation" aria-label="main navigation">
+                <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation">
                     <div className="navbar-brand">
                         <a className="navbar-item" href="#" onClick={this.onClose}>
                             <i className="fa fa-chevron-left" aria-hidden="true" width="28" height="28"></i>
@@ -123,13 +124,18 @@ class Playlist extends Component{
                                 <div>Playlist not found</div>
                             )
                         }else{
+                            let onepl = this.state.pl
                             switch(this.state.innerpage){
                                 case "songs":
-                                    return <Songlist pl={this.state.pl} />
+                                    return <Songlist pl={onepl} />
                                 case "detail":
-                                    return <Detail pl={this.state.pl} />
+                                    return <Detail pl={onepl} />
+                                case "setting":
+                                    return <Modifypl onepl={onepl} />
+                                case "details":
+                                    return <Detail pl={onepl} />
                                 default:
-                                    return <Songlist pl={this.state.pl} />
+                                    return <Songlist pl={onepl} />
 
                             }
                         }

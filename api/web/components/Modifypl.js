@@ -10,29 +10,40 @@ class Modifypl extends Component{
     state = {
         name: "",
         msg: "",
-        privateChecked: false
+        privateChecked: false,
+        canSubmit: false,
+        notion: false,
+        warningon: false
     }
 
     componentDidMount(){
-        
-    }
-
-    onTmp = e => {
-        fetch(api("modifypl"), {
-            method: "POST",
+        fetch(api(`pl/${this.props.onepl.pid}`), {
+            method: "GET",
             headers: new Headers({
-                "Content-Type": "application/json",
-                "x-auth": token
-            }),
-            body: JSON.stringify({
-                creator: email,
-                name,
-                msg,
-                isPrivate: privateChecked,
-                createdAt: moment().format()
+                "x-auth": this.props.user.token
             })
         })
+            .then(response => {
+                if(response.status >= 400) return Promise.reject();
+                return response.json()
+            })
+            .then(pl => {
+                const {name, msg, isPrivate} = pl
+                this.setState(() => ({
+                    name,
+                    msg,
+                    privateChecked: isPrivate,
+                    canSubmit: true
+                }))
+            })
+            .catch(err => {
+                console.log(err)
+                this.setState(() => ({
+                    canSubmit: false
+                }))
+            })
     }
+
 
     onBack = e => {
         this.props.dispatch({
@@ -68,40 +79,52 @@ class Modifypl extends Component{
                 msg: ""
             }
         ))
-        fetch(api("newplaylist"), {
+        fetch(api("modifypl"), {
             method: "POST",
             headers: new Headers({
                 "Content-Type": "application/json",
                 "x-auth": token
             }),
             body: JSON.stringify({
-                creator: email,
+                pid: this.props.onepl.pid,
                 name,
                 msg,
-                isPrivate: privateChecked,
-                createdAt: moment().format()
+                isPrivate: privateChecked
             })
         })
         .then(response => {
             if(response.status >= 400) return Promise.reject("Add playlist failed");
             return response.json()
         })
-        .then(obj => {
-            this.props.dispatch({
-                type: "UNSHIFTPLONE",
-                data: obj
-            })
-        })
         .then(() => {
-            this.props.dispatch({
-                type: "SETPAGENAME",
-                data: {
-                    pagename: "mylist"
-                }
+            fetch(api("mylist"), {
+                method: "GET",
+                headers: new Headers({
+                    "x-auth": this.props.user.token
+                })
+            })
+            .then(response => {
+                if(response.status >= 400) return Promise.reject("Get playlist failed");
+                return response.json()
+            })
+            .then(obj => {
+                this.props.dispatch({
+                    type: "REFRESHPL",
+                    data: obj
+                });
+                this.setState(() => ({
+                    notion: true
+                }))
+            })
+            .catch(err => {
+                console.log(err)
             })
         })
         .catch(err => {
             console.log(err)
+            this.setState(() => ({
+                warningon: true
+            }))
         })
     }
 
@@ -115,6 +138,8 @@ class Modifypl extends Component{
         return (
             <div>
                 <div>
+                    {this.state.notion ? <div className="notification is-primary">Success</div> : ""}
+                    {this.state.warningon ? <div className="notification is-danger">Failed</div> : ""}
                     <div className="field">
                         <label className="label">Name</label>
                         <div className="control has-icons-right">
@@ -161,7 +186,7 @@ class Modifypl extends Component{
                                 }else{
                                     return <button className="button is-link" disabled>Submit</button>
                                 }
-                            })(this.state.name.length > 2)}
+                            })(this.state.name.length > 2 && this.state.canSubmit)}
                         </div>
                         <div className="control">
                             <button className="button is-text" onClick={this.onBack}>Cancel</button>

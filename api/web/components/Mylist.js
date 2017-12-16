@@ -6,6 +6,10 @@ import OnePL from "./OnePL";
 
 class Mylist extends Component{
 
+    state = {
+        pls: []
+    }
+
     componentDidMount = e => {
         const {token} = this.props.user
         fetch(api("mylist"), {
@@ -19,6 +23,8 @@ class Mylist extends Component{
             return response.json()
         })
         .then(obj => {
+            
+            console.log("There, i did")
             this.props.dispatch({
                 type: "REFRESHPL",
                 data: obj
@@ -61,15 +67,19 @@ class Mylist extends Component{
     }
 
     renderPLs = pls => {
+        console.log(pls)
         var arr = [];
-        this.props.pl.forEach((e, i) => {
-            arr.push(<OnePL key={i}>{e}</OnePL>)
-        });
+        // this.props.pl.forEach((e, i) => {
+        //     arr.push(<OnePL key={i}>{e}</OnePL>)
+        // });
+
+        for(let i = 0; i < this.props.pl.length; i++){
+            arr[i] = (<OnePL key={i}>{this.props.pl[i]}</OnePL>)
+        }
         return arr
     }
 
     render(){
-        console.log("pl", this.props.pl)
         return (
             <div>
                 <div className="tabs list-tab">
@@ -90,7 +100,9 @@ class Mylist extends Component{
                     </ul>
                 </div>
                 <div className="pls zi-panel">
-                    <div>{this.renderPLs(this.props.pl)}</div>
+                    <div>{this.props.pl.map((e, i) => (
+                        <OnePL key={i}>{e}</OnePL>
+                    ))}</div>
                 </div>
             </div>
         )

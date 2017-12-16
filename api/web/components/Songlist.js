@@ -6,7 +6,9 @@ class Songlist extends Component{
 
     render(){
         return (
-            <div>{JSON.stringify(this.pl.songs)}</div>
+            <div>
+                <div>{JSON.stringify(this.pl.songs)}</div>
+            </div>
         )
     }
 }
