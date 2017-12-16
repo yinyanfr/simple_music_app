@@ -7,6 +7,7 @@ import AddPlayList from "./components/AddPlaylist"
 import Mylist from "./components/Mylist"
 import Playlist from "./components/Playlist"
 import Addsong from "./components/AddSong"
+import Player from "./components/Player"
 
 const Main = props => (
     <div>
@@ -28,6 +29,8 @@ const Main = props => (
                         return <Playlist pid={props.page.pid} />
                     case "addsong":
                         return <Addsong pid={props.page.pid} />
+                    case "player":
+                        return <Player song={props.page.sid} />
                     default:
                         return <Logopage />
                 }

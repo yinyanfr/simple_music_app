@@ -37,6 +37,12 @@ class Playlist extends Component{
                     innerpage: "songs",
                     pl
                 }))
+                store.dispatch({
+                    type: "CHANGEPLAYLIST",
+                    data: {
+                        playlist: pl
+                    }
+                })
             })
             .catch(err => {
                 console.log(err);
@@ -44,10 +50,14 @@ class Playlist extends Component{
                     notFound: true
                 }))
             })
+
     }
 
     onClose = e => {
         e.preventDefault()
+        store.dispatch({
+            type: "STOPMUSIC"
+        })
         store.dispatch({
             type: "SETPAGENAME",
             data: {
@@ -166,7 +176,8 @@ const mapStatetoProps = state => (
     {
         user: state.user,
         page: state.page,
-        pl: state.pl
+        pl: state.pl,
+        player: state.player
     }
  );
 
