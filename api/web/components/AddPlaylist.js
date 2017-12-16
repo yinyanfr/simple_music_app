@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 import api from "./../lib/api";
 import Hero from "./Hero"
 import Nav from "./Nav"
+import moment from "moment"
 
 class AddPlaylist extends Component{
 
@@ -56,7 +57,8 @@ class AddPlaylist extends Component{
                 creator: email,
                 name,
                 msg,
-                isPrivate: privateChecked
+                isPrivate: privateChecked,
+                createdAt: moment().format()
             })
         })
         .then(response => {

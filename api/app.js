@@ -129,12 +129,13 @@ app.delete("/logout", authenticate ,(req, res) => {
 
 app.post("/newplaylist", authenticate, (req, res) => {
     var pl = new Playlist();
-    const {name, isPrivate, msg} = req.body;
+    const {name, isPrivate, msg, createdAt} = req.body;
     pl.pid = uuid();
     pl.creator = req.user.toObject().email;
     pl.name = name;
     pl.isPrivate = isPrivate;
     pl.msg = msg;
+    pl.createdAt = createdAt;
     pl.save().then(data => {
         res.send(data);
     }, err => {
@@ -169,6 +170,24 @@ app.get("/mylist", authenticate, (req, res) => {
     Playlist.find({creator: email})
         .then(pls => {
             res.send(reverse(pls))
+        })
+})
+
+app.post("/pushsong", authenticate, (req, res) => {
+    const {pid, title, artist, source, link, img} = req.body;
+    Playlist.findOne({pid})
+        .then(pl => {
+            if(!pl){
+                res.status(404).send("Not found")
+            }else{
+                pl.pushSong({title, artist, source, link, img})
+                    .then(song => {
+                        res.send(song)
+                    })
+                    .catch(err => {
+                        res.status(400).send(err)
+                    })
+            }
         })
 })
 
@@ -339,6 +358,41 @@ app.post("/modifypl", authenticate, (req, res) => {
             res.status(400).send(err)
         })
 });
+
+app.post("/modifyme", authenticate, (req, res) => {
+    const {email} = req.user.toObject();
+    const {pseudo, motto, password} = req.body;
+    let modif = {pseudo, motto}
+    if(password && password.length > 2){
+        modif.password = password
+    }
+    User.findOne({email})
+        .then(user => {
+            if(!user) res.status(404).send("not found");
+            else{
+                if(modif.password){
+                    user.updatewp(pseudo, motto, password)
+                        .then(data => {
+                            res.send("success")
+                        })
+                        .catch(err => {
+                            res.status(400).send(err)
+                        })
+                }else{
+                    user.update({$set: modif})
+                        .then(data => {
+                            res.send("success")
+                        })
+                        .catch(err => {
+                            res.status(400).send(err)
+                        })
+                }
+            }
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
+})
 
 app.get("/ytsearch/:keyword", (req, res) => {
     const {keyword} = req.params;

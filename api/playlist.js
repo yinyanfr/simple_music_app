@@ -46,9 +46,26 @@ var playlistSchema = new mongoose.Schema({
     },
     songs:[
         {
-            sid:{
+            title: {
+                type: String,
+                trim: true,
+                required: true
+            },
+            artist: {
+                type: String,
+                trim: true,
+                requires: true
+            },
+            source: {
+                type: String,
+                default: "youtube"
+            },
+            link: {
                 type: String,
                 required: true
+            },
+            img: {
+                type: String
             }
         }
     ]
@@ -64,6 +81,14 @@ playlistSchema.methods.addSong = function (sid) {
         return playlist.save().then(() => {
             return song
         })
+    })
+};
+
+playlistSchema.methods.pushSong = function(song) {
+    var playlist = this;
+    playlist.songs.push(song)
+    return playlist.save().then(() => {
+        return song
     })
 };
 

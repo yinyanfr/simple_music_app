@@ -347,43 +347,45 @@ describe("POST /newplaylist to create a playlist for a user", () => {
     })
 });
 
-describe("POST /pushsid to push an existing song into a [playlist] by its creator", () => {
-    it("should push a song into a pl with correct sid and pid", done => {
-        return testNewPl(done, (token, pid) => {
-            return testNewsong(done, sid => {
-                request(app)
-                    .post("/pushsid")
-                    .set("x-auth", token)
-                    .send({pid, sid})
-                    .expect(200)
-                    .end((err, res) => {
-                        if(err) return done(err);
-                        Playlist.findOne({pid})
-                                .then(pl => {
-                                    if(!pl) return Promise.reject("playlist not found");
-                                    const {songs} = pl;
-                                    expect(songs[songs.length - 1].sid).toBe(sid);
-                                    done()
-                                })
-                                .catch(err => done(err))
-                    })
-            })
-        })
-    });
+// removed api
 
-    it("should NOT touch a playlist that is not created by the user", done => {
-        return testNewPl(done, (token, pid) => {
-            return testNewsong(done, sid => {
-                request(app)
-                    .post("/pushsid")
-                    .set("x-auth", token+"1")
-                    .send({pid, sid})
-                    .expect(401)
-                    .end(done)
-            })
-        })
-    })
-});
+// describe("POST /pushsid to push an existing song into a [playlist] by its creator", () => {
+//     it("should push a song into a pl with correct sid and pid", done => {
+//         return testNewPl(done, (token, pid) => {
+//             return testNewsong(done, sid => {
+//                 request(app)
+//                     .post("/pushsid")
+//                     .set("x-auth", token)
+//                     .send({pid, sid})
+//                     .expect(200)
+//                     .end((err, res) => {
+//                         if(err) return done(err);
+//                         Playlist.findOne({pid})
+//                                 .then(pl => {
+//                                     if(!pl) return Promise.reject("playlist not found");
+//                                     const {songs} = pl;
+//                                     expect(songs[songs.length - 1].sid).toBe(sid);
+//                                     done()
+//                                 })
+//                                 .catch(err => done(err))
+//                     })
+//             })
+//         })
+//     });
+
+//     it("should NOT touch a playlist that is not created by the user", done => {
+//         return testNewPl(done, (token, pid) => {
+//             return testNewsong(done, sid => {
+//                 request(app)
+//                     .post("/pushsid")
+//                     .set("x-auth", token+"1")
+//                     .send({pid, sid})
+//                     .expect(401)
+//                     .end(done)
+//             })
+//         })
+//     })
+// });
 
 describe("GET /me to verify the identity of a user with its stored token", () => {
     it("should go 200 with email and pseudo of the user corresponding a given token", done => {
@@ -569,6 +571,99 @@ describe("POST /modifypl", () => {
                             done()
                         })
                         .catch(err => done(err))
+                })
+        })
+    })
+})
+
+const blueSymphony = {
+    title: "Blue Symphony - Piano",
+    artist: "Yan Yin",
+    source: "youtube",
+    link: "https://www.youtube.com/watch?v=X44tEMCMHWc",
+    img: "https://i.ytimg.com/vi/X44tEMCMHWc/hqdefault.jpg"
+}
+
+describe("POST /pushsong", () => {
+    const {title, artist, source, link, img} = blueSymphony
+    it("should push a song into playlist", done => {
+        testNewPl(done, (token, pid) => [
+            request(app)
+                .post("/pushsong")
+                .set("x-auth", token)
+                .send({pid, title, artist, source, link, img})
+                .expect(200)
+                .end((err, res) => {
+                    if(err) return done(err);
+                    Playlist.findOne({pid})
+                        .then(pl => {
+                            expect(pl).toBeTruthy()
+                            expect(pl.songs.length).toBe(1)
+                            expect(pl.songs[0].link).toBe(blueSymphony.link)
+                            done()
+                        })
+                        .catch(err => done(err))
+                })
+        ])
+    })
+})
+
+const modifwp = {
+    pseudo: "party",
+    motto: "yes party time",
+    password: "newpassword"
+}
+
+const modifwop = {
+    pseudo: "party",
+    motto: "yes party time"
+}
+
+describe("POST /modifyme", () => {
+    it("should modify user with password", done => {
+        testLogin(done, token => {
+            request(app)
+                .post("/modifyme")
+                .set("x-auth", token)
+                .send(modifwp)
+                .expect(200)
+                .end((err, res) => {
+                    if(err) return done(err);
+                    request(app)
+                        .post("/login")
+                        .send({
+                            email: testUser.email,
+                            password: modifwp.password
+                        })
+                        .expect(200)
+                        .end((err, res) => {
+                            if(err) return done(err);
+                            done()
+                        })
+                })
+        })
+    })
+
+    it("should modify user without password", done => {
+        testLogin(done, token => {
+            request(app)
+                .post("/modifyme")
+                .set("x-auth", token)
+                .send(modifwop)
+                .expect(200)
+                .end((err, res) => {
+                    if(err) return done(err);
+                    request(app)
+                        .post("/login")
+                        .send({
+                            email: testUser.email,
+                            password: testUser.password
+                        })
+                        .expect(200)
+                        .end((err, res) => {
+                            if(err) return done(err);
+                            done()
+                        })
                 })
         })
     })

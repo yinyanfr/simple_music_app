@@ -19,12 +19,16 @@ var userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
+        minlength: 2,
         required: true
     },
     pseudo: {
         type: String,
         minlength: 4,
         required: true
+    },
+    motto: {
+        type: String
     },
     tokens: [
         {
@@ -54,6 +58,14 @@ userSchema.pre("save", function (next) {
         next()
     }
 });
+
+userSchema.methods.updatewp = function(pseudo, motto, password){
+    var user = this;
+    user.pseudo = pseudo;
+    user.motto = motto;
+    user.password = password;
+    return user.save()
+}
 
 userSchema.methods.toJSON = function () {
     var user = this;
