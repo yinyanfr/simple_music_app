@@ -18,6 +18,12 @@ class OnePL extends Component{
                 deleteModal: false
             }
         ))
+        store.dispatch({
+            type: "SETPAGENAME",
+            data: {
+                pagename: "loading"
+            }
+        })
         fetch(api("deletepl"), {
             method: "DELETE",
             headers: new Headers({

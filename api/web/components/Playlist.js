@@ -11,7 +11,7 @@ class Playlist extends Component{
     state = {
         notFound: false,
         pl: {},
-        innerpage: "songs"
+        innerpage: ""
     }
 
     componentDidMount(){
@@ -34,6 +34,7 @@ class Playlist extends Component{
             })
             .then(pl => {
                 this.setState(() => ({
+                    innerpage: "songs",
                     pl
                 }))
             })
@@ -135,7 +136,7 @@ class Playlist extends Component{
                                 case "details":
                                     return <Detail pl={onepl} />
                                 default:
-                                    return <Songlist pl={onepl} />
+                                    return <div>Loading...</div>
 
                             }
                         }

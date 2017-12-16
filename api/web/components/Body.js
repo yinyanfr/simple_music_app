@@ -21,6 +21,8 @@ class Body extends Component{
                                     return <Mylist />
                                 case "collection":
                                     return <Collection />
+                                case "loading":
+                                    return <Mylist />
                                 default:
                                     return <Mylist />
                             }

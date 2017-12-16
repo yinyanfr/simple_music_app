@@ -28,7 +28,7 @@ class Mylist extends Component{
             this.props.dispatch({
                 type: "REFRESHPL",
                 data: obj
-            });
+            })
         })
         .catch(err => {
             console.log(err)
