@@ -56,6 +56,10 @@ var playlistSchema = new mongoose.Schema({
                 trim: true,
                 requires: true
             },
+            description:{
+                type: String,
+                trim: true
+            },
             source: {
                 type: String,
                 default: "youtube"

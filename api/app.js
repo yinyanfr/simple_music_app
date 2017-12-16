@@ -174,13 +174,13 @@ app.get("/mylist", authenticate, (req, res) => {
 })
 
 app.post("/pushsong", authenticate, (req, res) => {
-    const {pid, title, artist, source, link, img} = req.body;
+    const {pid, title, artist, source, link, img, description} = req.body;
     Playlist.findOne({pid})
         .then(pl => {
             if(!pl){
                 res.status(404).send("Not found")
             }else{
-                pl.pushSong({title, artist, source, link, img})
+                pl.pushSong({title, artist, source, link, img, description})
                     .then(song => {
                         res.send(song)
                     })

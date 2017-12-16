@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import OnesongPl from "./OnesongPl"
 
 class Songlist extends Component{
 
@@ -7,9 +8,14 @@ class Songlist extends Component{
     render(){
         console.log(this.props.pl)
         return (
-            <div>
+            <div id="songlist">
                 {this.props.pl.songs.length === 0 ? <h2 className="title is-2">Nothing here</h2> : ""}
-                <div>{JSON.stringify(this.pl.songs)}</div>
+                <button className="button is-primary">Play All</button>
+                <div>{
+                    this.pl.songs.map((e, i) => (
+                        <OnesongPl key={i}>{e}</OnesongPl>
+                    ))
+                }</div>
             </div>
         )
     }

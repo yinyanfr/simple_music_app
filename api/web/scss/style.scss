@@ -64,10 +64,28 @@ nav{
 }
 
 .pl-status-head{
-    font-size: 100%
+    font-size: 100%;
 }
 
 .input-round{
-    border-radius: 10pt
+    border-radius: 10pt;
 }
 
+.break-letter{
+    word-break: break-all;
+}
+
+.card-margin{
+    margin-bottom: 10px;
+}
+
+#songlist{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#play-all{
+    margin-bottom: 10px; 
+    font-size: 200%;
+}

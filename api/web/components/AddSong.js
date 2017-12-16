@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import {connect} from "react-redux";
 import api from "./../lib/api";
 import store from "./../redux/configureStore"
+import Onesong from "./Onesong"
+
 class AddSong extends Component{
 
     state = {
@@ -71,9 +73,12 @@ class AddSong extends Component{
                             </span>
                         </div>
                     </form>
+
+                    <div>{this.state.result.map((e, i) => (
+                        <Onesong key={i}>{e}</Onesong>
+                    ))}</div>
                 </div>
 
-                <div>{JSON.stringify(this.state.result)}</div>
             </div>
         )
 
