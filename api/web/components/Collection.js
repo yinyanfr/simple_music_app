@@ -29,6 +29,10 @@ class Collection extends Component{
                 type: "REFRESHPL",
                 data: obj
             })
+
+            this.setState(() => ({
+                pls: obj
+            }))
         })
         .catch(err => {
             console.log(err)
@@ -98,7 +102,7 @@ class Collection extends Component{
                     </ul>
                 </div>
                 <div className="pls zi-panel">
-                    <div>{this.props.pl.map((e, i) => (
+                    <div>{this.state.pls.map((e, i) => (
                         <OnePL key={i}>{e}</OnePL>
                     ))}</div>
                 </div>
