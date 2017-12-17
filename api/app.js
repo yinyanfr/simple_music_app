@@ -10,6 +10,8 @@ var cors = require("cors");
 var User = require("./user"),
     Song = require("./song"),
     Playlist = require("./playlist");
+const isUuid = require("uuid-validate");
+const moment = require("moment")
 
 var app = express();
 
@@ -167,9 +169,83 @@ app.get("/me", authenticate, (req, res) => {
 
 app.get("/mylist", authenticate, (req, res) => {
     const {email} = req.user.toObject();
-    Playlist.find({creator: email})
+    Playlist.find({creator: email, isShared: false})
         .then(pls => {
             res.send(reverse(pls))
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
+})
+
+app.get("/mycollection", authenticate, (req, res) => {
+    const {email} = req.user.toObject();
+    Playlist.find({creator: email, isShared: true})
+        .then(pls => {
+            res.send(reverse(pls))
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
+})
+
+app.get("/mystatus", authenticate, (req, res) => {
+    const {email} = req.user.toObject();
+    var plNum = 0,
+        listenedSum = 0,
+        sharedSum = 0;
+    Playlist.find({creator: email})
+        .then(pls => {
+            plNum = pls.length;
+            pls.forEach(e => {
+                listenedSum += e.listenedTimes
+                sharedSum += e.sharedTimes
+            })
+            res.send({plNum, listenedSum, sharedSum})
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
+})
+
+app.post("/forkpl", authenticate, (req, res) => {
+    const {email} = req.user.toObject();
+    const {pid} = req.body;
+    Playlist.findOne({pid})
+        .then(pl => {
+            if(!pl){
+                res.status(404).send("not found")
+            }else{
+                const {name, msg, songs} = pl
+                let forkedpl = new Playlist()
+                forkedpl.name = name
+                forkedpl.msg = msg
+                forkedpl.songs = songs
+                forkedpl.isShared = true
+                forkedpl.sharedFromPid = pid
+                forkedpl.creator = email
+                forkedpl.pid = uuid()
+                forkedpl.createdAt = moment().format()
+                forkedpl.save()
+                    .then(data => {
+                        pl.update({$inc: {sharedTimes: 1}})
+                            .then(result1 => {
+                                res.send(data)
+                            })
+                            .catch(err => {
+                                console.log(err)
+                                res.status(400).send(err)
+                            })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.status(400).send(err)
+                    })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).send(err)
         })
 })
 

@@ -51,6 +51,14 @@ class Playlist extends Component{
                 }))
             })
 
+            fetch(api(`pllistened/${pid}`), {
+                method: "PATCH"
+            }).then(response => {
+                if(response.status >= 400) return Promise.reject();
+            }).catch(err => {
+                console.log(err)
+            })
+            
     }
 
     onClose = e => {

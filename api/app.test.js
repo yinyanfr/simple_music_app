@@ -669,6 +669,36 @@ describe("POST /modifyme", () => {
     })
 })
 
+describe("POST /forkpl", () => {
+    it("should fork a playlist", done => {
+        testNewPl(done, (token, pid) => {
+            request(app)
+                .post("/forkpl")
+                .set("x-auth", token)
+                .send({pid})
+                .expect(200)
+                .end((err, res) => {
+                    if(err) return done(err);
+                    expect(res.body.name).toBe(testPl.name)
+                    let fpid = res.body.pid;
+                    Playlist.findOne({pid: fpid})
+                        .then(fpl => {
+                            Playlist.findOne({pid})
+                                .then(pl => {
+                                    expect(fpl).toBeTruthy()
+                                    expect(fpl.isShared).toBe(true)
+                                    expect(fpl.sharedFromPid).toBe(pid)
+                                    expect(pl.sharedTimes).toBe(1)
+                                    done()
+                                })
+                                .catch(err => done(err))
+                        })
+                        .catch(err => done(err))
+                })
+        })
+    })
+})
+
 // API Removed
 
 // describe(`GET /songlist/:pid to every song in a playlist by its pid, 

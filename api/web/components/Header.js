@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 import api from "./../lib/api";
 import store from "./../redux/configureStore";
 import Hero from "./Hero"
+import Mystatus from "./Mystatus"
 
 class Header extends Component {
 
@@ -55,6 +56,16 @@ class Header extends Component {
         ))
     }
 
+    onMyStatus = e => {
+        e.preventDefault();
+        store.dispatch({
+            type: "SETPAGENAME",
+            data: {
+                pagename: "mystatus"
+            }
+        })
+    }
+
     render(){
         return (
             <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation">
@@ -76,6 +87,7 @@ class Header extends Component {
                     className={this.state.burger ? "navbar-menu is-active" : "navbar-menu"}
                 >
                     <div className="navbar-end main-burger">
+                        <a className="navbar-item" href="#" onClick={this.onMyStatus}>My Status</a>
                         <a className="navbar-item" href="#" onClick={this.onLogout}>logout</a>
                     </div>
                 </div>
