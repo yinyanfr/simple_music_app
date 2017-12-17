@@ -9,6 +9,7 @@ import Playlist from "./components/Playlist"
 import Addsong from "./components/AddSong"
 import Player from "./components/Player"
 import Mystatus from "./components/Mystatus"
+import Searchpl from "./components/Searchpl"
 
 const Main = props => (
     <div>
@@ -34,6 +35,8 @@ const Main = props => (
                         return <Player song={props.page.sid} />
                     case "mystatus":
                         return <Mystatus />
+                    case "searchpl":
+                        return <Searchpl />
                     default:
                         return <Logopage />
                 }

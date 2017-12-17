@@ -699,6 +699,38 @@ describe("POST /forkpl", () => {
     })
 })
 
+describe("GET /searchpl", () => {
+    it("should search with pid", done => {
+        testNewPl(done, (token, pid) => {
+            request(app)
+                .get(`/searchpl/${pid}`)
+                .expect(200)
+                .end((err, res) => {
+                    if(err) return done(err)
+                    expect(res.body[0]).toBeTruthy()
+                    expect(res.body[0].pid).toBe(pid)
+                    done()
+                })
+        })
+    })
+
+    it("should search with keyword", done => {
+        testNewPl(done, (token, pid) => {
+            request(app)
+                .get(`/searchpl/lorem`)
+                .expect(200)
+                .end((err, res) => {
+                    if(err) return done(err)
+                    console.log(res.body)
+                    const regex = new RegExp("lorem", "i")
+                    expect(res.body[0]).toBeTruthy()
+                    expect(regex.test(res.body[0].name)).toBe(true)
+                    done()
+                })
+        })
+    })
+})
+
 // API Removed
 
 // describe(`GET /songlist/:pid to every song in a playlist by its pid, 

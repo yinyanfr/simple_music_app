@@ -105,13 +105,20 @@ class OnePL extends Component{
             <div className="card onepl">
                 <header className="card-header">
                     <p className="card-header-title">
-                        {this.pl.isPrivate ? <i className="fa fa-lock" aria-hidden="true"></i> : ""}&nbsp;&nbsp;{this.pl.name}
+                        {this.pl.isPrivate ? <i className="fa fa-lock" aria-hidden="true"></i> : ""}
+                        {this.pl.isShared ? <i className="fa fa-clone" aria-hidden="true"></i> : ""}
+                        &nbsp;&nbsp;
+                        {this.pl.name}
                     </p>
-                    <a href="#" className="card-header-icon" aria-label="more options" onClick={this.onOpenDelete}>
-                        <span className="icon">
-                            <i className="fa fa-close" aria-hidden="true"></i>
-                        </span>
-                    </a>
+                    {
+                        this.props.pagename === "searchpl"
+                        ? ""
+                        : (<a href="#" className="card-header-icon" aria-label="more options" onClick={this.onOpenDelete}>
+                                <span className="icon">
+                                    <i className="fa fa-close" aria-hidden="true"></i>
+                                </span>
+                            </a>)
+                    }
                 </header>
                 <div className="card-content">
                     <div className="content">
@@ -126,7 +133,11 @@ class OnePL extends Component{
                     <div className="modal-card">
                         <header className="modal-card-head">
                             <p className="modal-card-title">Are you sure?</p>
-                            <button className="delete" aria-label="close" onClick={this.onCloseDelete}></button>
+                            {
+                                this.pl.creator === this.props.user.email
+                                    ? <button className="delete" aria-label="close" onClick={this.onCloseDelete}></button>
+                                    : ""
+                            }
                         </header>
                         <section className="modal-card-body">
                             Are you sure that you want to delete {this.pl.name}?

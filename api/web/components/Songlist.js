@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import OnesongPl from "./OnesongPl"
+import {connect} from "react-redux";
+import api from "./../lib/api";
+import store from "./../redux/configureStore"
 
 class Songlist extends Component{
 
@@ -17,14 +20,24 @@ class Songlist extends Component{
                     ))
                 }</div>
 
-                <button id="play-all" className="button is-primary">
-                    <i className="fa fa-plus" aria-hidden="true"></i>
-                    &nbsp;&nbsp;
-                    Add songs
-                </button>
+                {this.pl.creator === this.props.user.email
+                    ? (
+                        <button id="play-all" className="button is-primary">
+                            <i className="fa fa-plus" aria-hidden="true"></i>
+                            &nbsp;&nbsp;
+                            Add songs
+                        </button>
+                    )
+                    : ""}
             </div>
         )
     }
 }
+const mapStatetpProps = state => (
+    {
+        user: state.user
+    }
+)
 
-export default Songlist
+
+export default connect(mapStatetpProps)(Songlist)

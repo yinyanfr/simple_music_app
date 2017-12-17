@@ -11,7 +11,8 @@ class Playlist extends Component{
     state = {
         notFound: false,
         pl: {},
-        innerpage: ""
+        innerpage: "",
+        forked: false
     }
 
     componentDidMount(){
@@ -66,12 +67,21 @@ class Playlist extends Component{
         store.dispatch({
             type: "STOPMUSIC"
         })
-        store.dispatch({
-            type: "SETPAGENAME",
-            data: {
-                pagename: "mylist"
-            }
-        })
+        if(this.state.pl.creator === this.props.user.email){
+            store.dispatch({
+                type: "SETPAGENAME",
+                data: {
+                    pagename: "mylist"
+                }
+            })
+        }else{
+            store.dispatch({
+                type: "SETPAGENAME",
+                data: {
+                    pagename: "searchpl"
+                }
+            })
+        }
     }
 
     onSongs = e => {
@@ -102,6 +112,30 @@ class Playlist extends Component{
             data: {
                 pagename: "addsong"
             }
+        })
+    }
+
+    onFork = e => {
+        e.preventDefault()
+        this.setState(() => ({
+            forked: true
+        }))
+        fetch(api("forkpl"), {
+            method: "POST",
+            headers: new Headers({
+                "Content-Type": "application/json",
+                "x-auth": this.props.user.token
+            }),
+            body: JSON.stringify({pid: this.props.page.pid})
+        })
+        .then(response => {
+            if(response.status >= 400) return Promise.reject()
+        })
+        .catch(err => {
+            console.log(err)
+            this.setState(() => ({
+                forked: false
+            }))
         })
     }
 
@@ -143,10 +177,19 @@ class Playlist extends Component{
                                 )
                             }
                         })(this.state.pl.creator === thispl.props.user.email)}
-                        {this.state.innerpage === "songs"
-                            ? <button className="button is-primary is-pulled-right add-pl" onClick={this.onAddSong}>Add Song</button>
-                            : ""
-                        }
+                        {(() => {
+                            if(this.state.innerpage === "songs"){
+                                if(this.state.pl.creator === thispl.props.user.email){
+                                    return <button className="button is-primary is-pulled-right add-pl" onClick={this.onAddSong}>Add Song</button>
+                                }else{
+                                    if(!this.state.forked){
+                                        return <button className="button is-link is-pulled-right add-pl" onClick={this.onFork}>Collect</button>
+                                    }else{
+                                        return <button className="button is-link is-pulled-right add-pl" disabled onClick={this.onFork}>Collected</button>
+                                    }
+                                }
+                            }
+                        })()}
                     </ul>
                 </div>
                 <div className="zi-panel">

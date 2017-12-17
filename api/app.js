@@ -118,6 +118,28 @@ app.post("/login", (req, res) => {
         })
 });
 
+app.get("/searchpl/:keyword", (req, res) => {
+    const {keyword} = req.params;
+    if(isUuid(keyword)){
+        Playlist.find({pid: keyword})
+            .then(pls => {
+                res.send(pls.filter(e => e.creator !== "nobody").filter(e => e.isPrivate === false))
+            })
+            .catch(err => {
+                res.status(400).send(err)
+            })
+    }else{
+        const regex = new RegExp(keyword, "i")
+        Playlist.find({name: regex})
+            .then(pls => {
+                res.send(pls.filter(e => e.creator !== "nobody").filter(e => e.isPrivate === false))
+            })
+            .catch(err => {
+                res.status(400).send(err)
+            })
+    }
+})
+
 app.delete("/logout", authenticate ,(req, res) => {
     req.user.removeToken(req.token)
             .then(done => {

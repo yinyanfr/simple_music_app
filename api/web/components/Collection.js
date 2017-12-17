@@ -35,13 +35,11 @@ class Collection extends Component{
         })
     }
 
-    onAddPlaylist = e => {
+    onSearchPlaylist = e => {
         store.dispatch({
-            type: "SETPAGEALL",
+            type: "SETPAGENAME",
             data: {
-                pagename: "addplaylist",
-                pid: "",
-                sid: ""
+                pagename: "searchpl"
             }
         })
     }
@@ -96,7 +94,7 @@ class Collection extends Component{
                         >
                             <a>Collections</a>
                         </li>
-                        <button className="button is-primary is-pulled-right add-pl" onClick={this.onAddPlaylist}>Search Playlist</button>
+                        <button className="button is-link is-pulled-right add-pl" onClick={this.onSearchPlaylist}>Search Playlist</button>
                     </ul>
                 </div>
                 <div className="pls zi-panel">
