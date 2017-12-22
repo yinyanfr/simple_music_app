@@ -105,6 +105,14 @@ class Collection extends Component{
                     <div>{this.state.pls.map((e, i) => (
                         <OnePL key={i}>{e}</OnePL>
                     ))}</div>
+
+                
+                        <button className="button is-link big-end-button" onClick={this.onSearchPlaylist}>
+                            <i className="fa fa-search" aria-hidden="true"></i>
+                            &nbsp;&nbsp;
+                            Search Playlist
+                        </button>
+                
                 </div>
             </div>
         )

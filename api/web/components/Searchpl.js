@@ -4,6 +4,8 @@ import api from "./../lib/api";
 import store from "./../redux/configureStore"
 import OnePL from "./OnePL"
 
+var globalSearchList = []
+
 class Searchpl extends Component{
 
     state = {
@@ -45,6 +47,13 @@ class Searchpl extends Component{
                         result,
                         loading: false
                     }))
+                    store.dispatch({
+                        type: "SETSEARCHLIST",
+                        data:{
+                            list: result
+                        }
+                    })
+                    globalSearchList = result
                 })
         }
     }
@@ -74,9 +83,22 @@ class Searchpl extends Component{
                         </div>
                     </form>
 
-                    <div>{this.state.result.map((e, i) => (
-                        <OnePL key={i}>{e}</OnePL>
-                    ))}</div>
+                    <div>{(() => {
+                        if(this.state.result.length){
+                            return (
+                                this.state.result.map((e, i) => (
+                                    <OnePL key={i}>{e}</OnePL>
+                                ))
+                            )
+                        }else{
+                            console.log(globalSearchList)
+                            return (
+                                globalSearchList.map((e, i) => (
+                                    <OnePL key={i}>{e}</OnePL>
+                                ))
+                            )
+                        }
+                    })()}</div>
                 </div>
 
             </div>
@@ -89,7 +111,8 @@ const mapStatetoProps = state => (
     {
         user: state.user,
         page: state.page,
-        pl: state.pl
+        pl: state.pl,
+        search: state.search
     }
  );
 

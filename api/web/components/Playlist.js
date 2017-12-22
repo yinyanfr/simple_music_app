@@ -67,18 +67,19 @@ class Playlist extends Component{
         store.dispatch({
             type: "STOPMUSIC"
         })
-        if(this.state.pl.creator === this.props.user.email){
+        let prev = this.props.page.prev
+        if(prev){
             store.dispatch({
                 type: "SETPAGENAME",
                 data: {
-                    pagename: "mylist"
+                    pagename: prev
                 }
             })
         }else{
             store.dispatch({
                 type: "SETPAGENAME",
                 data: {
-                    pagename: "searchpl"
+                    pagename: "mylist"
                 }
             })
         }

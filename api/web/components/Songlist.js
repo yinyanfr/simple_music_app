@@ -8,6 +8,16 @@ class Songlist extends Component{
 
     pl = this.props.pl
 
+    onAddSong = e => {
+        e.preventDefault()
+        store.dispatch({
+            type: "SETPAGENAME",
+            data: {
+                pagename: "addsong"
+            }
+        })
+    }
+
     render(){
         console.log(this.props.pl)
         return (
@@ -22,7 +32,7 @@ class Songlist extends Component{
 
                 {this.pl.creator === this.props.user.email
                     ? (
-                        <button id="play-all" className="button is-primary">
+                        <button className="button is-primary big-end-button" onClick={this.onAddSong}>
                             <i className="fa fa-plus" aria-hidden="true"></i>
                             &nbsp;&nbsp;
                             Add songs

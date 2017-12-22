@@ -5,20 +5,22 @@ const pageDefaultState = {
 };
 
 export default (state = pageDefaultState, action) => {
-    let {pagename, pid, sid} = action.data || state;
+    let {pagename, pid, sid, prev} = action.data || state;
     console.log(action.type)
     switch (action.type) {
         case "SETPAGENAME":
             return {
                 pagename,
                 pid: state.pid,
-                sid: state.sid
+                sid: state.sid,
+                prev
             };
         case "SETPAGEALL":
             return {
                 pagename,
                 pid,
-                sid
+                sid,
+                prev
             };
         case "SETPID":
             return {

@@ -4,6 +4,7 @@ import userReducer from "./userReducer";
 import pageReducer from "./pageReducer";
 import plReducer from "./plReducer";
 import playerReducer from "./playerReducer";
+import searchReducer from "./searchReducer"
 
 const configureStore = () => (
     createStore(
@@ -12,7 +13,8 @@ const configureStore = () => (
             user: userReducer,
             page: pageReducer,
             pl: plReducer,
-            player: playerReducer
+            player: playerReducer,
+            search: searchReducer
         })
     )
 );

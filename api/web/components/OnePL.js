@@ -91,11 +91,13 @@ class OnePL extends Component{
     onEnter = e => {
         e.preventDefault()
         let {pid} = this.pl
+        let prev = this.props.page.pagename
         store.dispatch({
             type: "SETPAGEALL",
             data: {
                 pagename: "playlist",
-                pid
+                pid,
+                prev
             }
         })
     }
@@ -111,7 +113,7 @@ class OnePL extends Component{
                         {this.pl.name}
                     </p>
                     {
-                        this.props.pagename === "searchpl"
+                        this.props.page.pagename === "searchpl"
                         ? ""
                         : (<a href="#" className="card-header-icon" aria-label="more options" onClick={this.onOpenDelete}>
                                 <span className="icon">
@@ -134,7 +136,8 @@ class OnePL extends Component{
                         <header className="modal-card-head">
                             <p className="modal-card-title">Are you sure?</p>
                             {
-                                this.pl.creator === this.props.user.email
+                                this.pl.creator === this.props.user.email 
+                                && ((this.props.page.pagename === "mylist") || (this.props.page.pagename === "collection"))
                                     ? <button className="delete" aria-label="close" onClick={this.onCloseDelete}></button>
                                     : ""
                             }
@@ -163,7 +166,8 @@ class OnePL extends Component{
 const mapStatetpProps = state => (
     {
         user: state.user,
-        pl: state.pl
+        pl: state.pl,
+        page: state.page
     }
 )
 

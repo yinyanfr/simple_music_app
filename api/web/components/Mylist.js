@@ -107,7 +107,16 @@ class Mylist extends Component{
                     <div>{this.state.pls.map((e, i) => (
                         <OnePL key={i}>{e}</OnePL>
                     ))}</div>
+
+ 
+                        <button className="button is-primary big-end-button" onClick={this.onAddPlaylist}>
+                            <i className="fa fa-plus" aria-hidden="true"></i>
+                            &nbsp;&nbsp;
+                            Add Playlist
+                        </button>
+             
                 </div>
+
             </div>
         )
     }
