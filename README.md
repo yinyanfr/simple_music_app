@@ -2,7 +2,7 @@
 
 - YIN Yan
 
-<div><img src="https://github.com/yinyanfr/simple_music_app/tree/master/doc/img/sma.jpg" /></div>
+<div><img src="http://music.yinyan.fr/sma.jpg" /></div>
 
 This document is also available in Chinese and French, see doc/
 
