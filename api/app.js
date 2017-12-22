@@ -15,15 +15,6 @@ const moment = require("moment")
 
 var app = express();
 
-// app.use((req, res, next) => {
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header("Access-Control-Allow-Headers", "X-Requested-With");
-//     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS,PATCH");
-//     res.header("X-Powered-By",' 3.2.1')
-//     res.header("Content-Type", "application/json;charset=utf-8");
-//     next();
-// });
-
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -503,7 +494,11 @@ app.get("/ytsearch/:keyword", (req, res) => {
         })
 });
 
-//app.use(express.static(__dirname+"/web"));
+app.use(express.static(path.join(__dirname, "web")));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "web", "index.html"))
+})
 
 app.listen(30706, () => {
     console.log("Test server running on 30706")

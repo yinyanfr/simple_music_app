@@ -3,7 +3,7 @@ const {isEmail, isHash} = require("validator");
 const {pick} = require("lodash");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const salt = "tempsalt";
+const salt = require("./salt")
 
 var userSchema = new mongoose.Schema({
     email: {

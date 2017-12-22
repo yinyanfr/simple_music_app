@@ -15,8 +15,27 @@ export default class Register extends Component{
             pseudoValid: false,
             submitActive: true,
             agreement: false,
-            termChecked: false
+            termChecked: false,
+            license: ""
         }
+    }
+
+    componentDidMount(){
+        fetch("./../LICENSE")
+            .then(response => {
+                if(response >= 400) return Promise.reject("License not found.")
+                return response.text()
+            })
+            .then(txt => {
+                this.setState(() => ({
+                    license: txt
+                }))
+            })
+            .catch(err => {
+                this.setState(() => ({
+                    license: err
+                }))
+            })
     }
 
     testEmailExistence = email => {
@@ -245,7 +264,7 @@ export default class Register extends Component{
                                 <button className="delete" aria-label="close" onClick={this.onCloseAgreement}></button>
                             </header>
                             <section className="modal-card-body">
-                                Lorem Ipsum
+                                {this.state.license}
                             </section>
                             <footer className="modal-card-foot">
                                 <button className="button is-success" onClick={this.onCloseAgreement}>OK</button>
