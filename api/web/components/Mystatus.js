@@ -7,10 +7,11 @@ class Mystatus extends Component{
 
     onClose = e => {
         e.preventDefault()
+        let {prev} = this.props.page
         store.dispatch({
             type: "SETPAGENAME",
             data: {
-                pagename: "mylist"
+                pagename: prev || "mylist"
             }
         })
     }

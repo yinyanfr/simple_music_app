@@ -10,6 +10,7 @@ import Addsong from "./components/AddSong"
 import Player from "./components/Player"
 import Mystatus from "./components/Mystatus"
 import Searchpl from "./components/Searchpl"
+import Modifyme from "./components/Modifyme"
 
 const Main = props => (
     <div>
@@ -37,6 +38,8 @@ const Main = props => (
                         return <Mystatus />
                     case "searchpl":
                         return <Searchpl />
+                    case "modifyme":
+                        return <Modifyme />
                     default:
                         return <Logopage />
                 }

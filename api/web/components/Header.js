@@ -58,10 +58,24 @@ class Header extends Component {
 
     onMyStatus = e => {
         e.preventDefault();
+        const {pagename} = this.props.page
         store.dispatch({
             type: "SETPAGENAME",
             data: {
-                pagename: "mystatus"
+                pagename: "mystatus",
+                prev: pagename
+            }
+        })
+    }
+
+    onModifyme = e => {
+        e.preventDefault();
+        const {pagename} = this.props.page
+        store.dispatch({
+            type: "SETPAGENAME",
+            data: {
+                pagename: "modifyme",
+                prev: pagename
             }
         })
     }
@@ -87,6 +101,7 @@ class Header extends Component {
                     className={this.state.burger ? "navbar-menu is-active" : "navbar-menu"}
                 >
                     <div className="navbar-end main-burger">
+                    <a className="navbar-item" href="#" onClick={this.onModifyme}>Account Settings</a>
                         <a className="navbar-item" href="#" onClick={this.onMyStatus}>My Status</a>
                         <a className="navbar-item" href="#" onClick={this.onLogout}>logout</a>
                     </div>

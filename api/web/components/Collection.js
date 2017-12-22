@@ -4,10 +4,13 @@ import api from "./../lib/api";
 import store from "./../redux/configureStore";
 import OnePL from "./OnePL";
 
+var globalCollection = []
+
 class Collection extends Component{
 
     state = {
-        pls: []
+        pls: [],
+        nothing: false
     }
 
     componentDidMount = e => {
@@ -31,8 +34,10 @@ class Collection extends Component{
             })
 
             this.setState(() => ({
-                pls: obj
+                pls: obj,
+                nothing: true
             }))
+            globalCollection = obj
         })
         .catch(err => {
             console.log(err)
@@ -102,9 +107,19 @@ class Collection extends Component{
                     </ul>
                 </div>
                 <div className="pls zi-panel">
-                    <div>{this.state.pls.map((e, i) => (
-                        <OnePL key={i}>{e}</OnePL>
-                    ))}</div>
+                    <div>{(() => {
+                        if(this.state.pls.length){
+                            return (
+                                this.state.pls.map((e, i) => (
+                                    <OnePL key={i}>{e}</OnePL>
+                                ))
+                            )
+                        }else if(!this.state.nothing){
+                            return (
+                                <div>Loading...</div>
+                            )
+                        }
+                    })()}</div>
 
                 
                         <button className="button is-link big-end-button" onClick={this.onSearchPlaylist}>

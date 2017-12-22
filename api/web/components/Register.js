@@ -94,7 +94,7 @@ export default class Register extends Component{
             })
             .then(obj => {
                 console.log(obj);
-                sessionStorage.setItem("token", obj.token);
+                localStorage.setItem("token", obj.token);
                 store.dispatch({
                     type: "SETUSER",
                     data: {
@@ -219,7 +219,7 @@ export default class Register extends Component{
                         <div className="field is-grouped">
                             <div className="control">
                             {(() => {
-                                if((!!this.state.emailValid) && this.state.passwordValid && this.state.pseudoValid)
+                                if((!!this.state.emailValid) && this.state.passwordValid && this.state.pseudoValid && this.state.agreement)
                                 return (<button className="button is-link">Submit</button>);
                                 return <button className="button is-link" disabled>Submit</button>
                             })()}

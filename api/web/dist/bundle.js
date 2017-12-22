@@ -8106,10 +8106,12 @@ var Mystatus = function (_Component) {
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Mystatus.__proto__ || Object.getPrototypeOf(Mystatus)).call.apply(_ref, [this].concat(args))), _this), _this.onClose = function (e) {
             e.preventDefault();
+            var prev = _this.props.page.prev;
+
             _configureStore2.default.dispatch({
                 type: "SETPAGENAME",
                 data: {
-                    pagename: "mylist"
+                    pagename: prev || "mylist"
                 }
             });
         }, _temp), _possibleConstructorReturn(_this, _ret);
@@ -19611,6 +19613,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var globalMylist = [];
+
 var Mylist = function (_Component) {
     _inherits(Mylist, _Component);
 
@@ -19626,7 +19630,8 @@ var Mylist = function (_Component) {
         }
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Mylist.__proto__ || Object.getPrototypeOf(Mylist)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-            pls: []
+            pls: [],
+            nothing: false
         }, _this.componentDidMount = function (e) {
             var token = _this.props.user.token;
 
@@ -19648,9 +19653,11 @@ var Mylist = function (_Component) {
 
                 _this.setState(function () {
                     return {
-                        pls: obj
+                        pls: obj,
+                        nothing: true
                     };
                 });
+                globalMylist = obj;
             }).catch(function (err) {
                 console.log(err);
             });
@@ -19700,6 +19707,8 @@ var Mylist = function (_Component) {
     _createClass(Mylist, [{
         key: "render",
         value: function render() {
+            var _this2 = this;
+
             return _react2.default.createElement(
                 "div",
                 null,
@@ -19746,13 +19755,23 @@ var Mylist = function (_Component) {
                     _react2.default.createElement(
                         "div",
                         null,
-                        this.state.pls.map(function (e, i) {
-                            return _react2.default.createElement(
-                                _OnePL2.default,
-                                { key: i },
-                                e
-                            );
-                        })
+                        function () {
+                            if (_this2.state.pls.length) {
+                                return _this2.state.pls.map(function (e, i) {
+                                    return _react2.default.createElement(
+                                        _OnePL2.default,
+                                        { key: i },
+                                        e
+                                    );
+                                });
+                            } else if (!_this2.state.nothing) {
+                                return _react2.default.createElement(
+                                    "div",
+                                    null,
+                                    "Loading..."
+                                );
+                            }
+                        }()
                     ),
                     _react2.default.createElement(
                         "button",
@@ -39131,6 +39150,10 @@ var _Searchpl = __webpack_require__(310);
 
 var _Searchpl2 = _interopRequireDefault(_Searchpl);
 
+var _Modifyme = __webpack_require__(317);
+
+var _Modifyme2 = _interopRequireDefault(_Modifyme);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Main = function Main(props) {
@@ -39160,6 +39183,8 @@ var Main = function Main(props) {
                     return _react2.default.createElement(_Mystatus2.default, null);
                 case "searchpl":
                     return _react2.default.createElement(_Searchpl2.default, null);
+                case "modifyme":
+                    return _react2.default.createElement(_Modifyme2.default, null);
                 default:
                     return _react2.default.createElement(_Logopage2.default, null);
             }
@@ -41368,8 +41393,9 @@ var verify = function verify(token) {
     return fetch((0, _api2.default)("me"), {
         method: "GET",
         headers: headers
-    }).then(function (data) {
-        return data.json();
+    }).then(function (response) {
+        if (response.status >= 400) return Promise.reject();
+        return response.json();
     });
 };
 
@@ -41482,10 +41508,24 @@ var Header = function (_Component) {
             });
         }, _this.onMyStatus = function (e) {
             e.preventDefault();
+            var pagename = _this.props.page.pagename;
+
             _configureStore2.default.dispatch({
                 type: "SETPAGENAME",
                 data: {
-                    pagename: "mystatus"
+                    pagename: "mystatus",
+                    prev: pagename
+                }
+            });
+        }, _this.onModifyme = function (e) {
+            e.preventDefault();
+            var pagename = _this.props.page.pagename;
+
+            _configureStore2.default.dispatch({
+                type: "SETPAGENAME",
+                data: {
+                    pagename: "modifyme",
+                    prev: pagename
                 }
             });
         }, _temp), _possibleConstructorReturn(_this, _ret);
@@ -41530,6 +41570,11 @@ var Header = function (_Component) {
                     _react2.default.createElement(
                         "div",
                         { className: "navbar-end main-burger" },
+                        _react2.default.createElement(
+                            "a",
+                            { className: "navbar-item", href: "#", onClick: this.onModifyme },
+                            "Account Settings"
+                        ),
                         _react2.default.createElement(
                             "a",
                             { className: "navbar-item", href: "#", onClick: this.onMyStatus },
@@ -42029,6 +42074,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var globalCollection = [];
+
 var Collection = function (_Component) {
     _inherits(Collection, _Component);
 
@@ -42044,7 +42091,8 @@ var Collection = function (_Component) {
         }
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Collection.__proto__ || Object.getPrototypeOf(Collection)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-            pls: []
+            pls: [],
+            nothing: false
         }, _this.componentDidMount = function (e) {
             var token = _this.props.user.token;
 
@@ -42066,9 +42114,11 @@ var Collection = function (_Component) {
 
                 _this.setState(function () {
                     return {
-                        pls: obj
+                        pls: obj,
+                        nothing: true
                     };
                 });
+                globalCollection = obj;
             }).catch(function (err) {
                 console.log(err);
             });
@@ -42116,6 +42166,8 @@ var Collection = function (_Component) {
     _createClass(Collection, [{
         key: "render",
         value: function render() {
+            var _this2 = this;
+
             return _react2.default.createElement(
                 "div",
                 null,
@@ -42162,13 +42214,23 @@ var Collection = function (_Component) {
                     _react2.default.createElement(
                         "div",
                         null,
-                        this.state.pls.map(function (e, i) {
-                            return _react2.default.createElement(
-                                _OnePL2.default,
-                                { key: i },
-                                e
-                            );
-                        })
+                        function () {
+                            if (_this2.state.pls.length) {
+                                return _this2.state.pls.map(function (e, i) {
+                                    return _react2.default.createElement(
+                                        _OnePL2.default,
+                                        { key: i },
+                                        e
+                                    );
+                                });
+                            } else if (!_this2.state.nothing) {
+                                return _react2.default.createElement(
+                                    "div",
+                                    null,
+                                    "Loading..."
+                                );
+                            }
+                        }()
                     ),
                     _react2.default.createElement(
                         "button",
@@ -42463,7 +42525,7 @@ var Register = function (_Component) {
                     }
                 }).then(function (obj) {
                     console.log(obj);
-                    sessionStorage.setItem("token", obj.token);
+                    localStorage.setItem("token", obj.token);
                     _configureStore2.default.dispatch({
                         type: "SETUSER",
                         data: {
@@ -42667,7 +42729,7 @@ var Register = function (_Component) {
                             "div",
                             { className: "control" },
                             function () {
-                                if (!!_this2.state.emailValid && _this2.state.passwordValid && _this2.state.pseudoValid) return _react2.default.createElement(
+                                if (!!_this2.state.emailValid && _this2.state.passwordValid && _this2.state.pseudoValid && _this2.state.agreement) return _react2.default.createElement(
                                     "button",
                                     { className: "button is-link" },
                                     "Submit"
@@ -44994,7 +45056,7 @@ var Login = function (_Component) {
                 }
             }).then(function (obj) {
                 console.log(obj);
-                sessionStorage.setItem("token", obj.token);
+                localStorage.setItem("token", obj.token);
                 _configureStore2.default.dispatch({
                     type: "SETUSER",
                     data: {
@@ -48983,10 +49045,271 @@ exports = module.exports = __webpack_require__(181)(undefined);
 
 
 // module
-exports.push([module.i, "#logopage {\n  display: flex;\n  flex-direction: column;\n  flex-wrap: nowrap;\n  align-items: center;\n  justify-content: space-between;\n  align-content: center; }\n\n.logged-buttons {\n  display: flex;\n  flex-direction: column; }\n\n.pls {\n  display: flex;\n  flex-direction: column;\n  flex-wrap: nowrap;\n  justify-content: space-between;\n  align-items: space-between; }\n\n.onepl {\n  margin-top: 10px;\n  margin-bottom: 10px; }\n\n.main-burger {\n  text-align: right; }\n\n.list-tab {\n  display: flex;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n.add-pl {\n  height: 150%;\n  justify-self: flex-end; }\n\n.zi-panel {\n  padding: 0 15px; }\n\n.zi-panel-margin {\n  margin-top: 10px; }\n\nnav {\n  box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);\n  margin-bottom: 10px; }\n\n.navbar-burger {\n  border: none;\n  background-color: white; }\n\n.logopic {\n  width: 50%;\n  margin-bottom: 50px; }\n\n.pl-status-head {\n  font-size: 100%; }\n\n.input-round {\n  border-radius: 10pt; }\n\n.break-letter {\n  word-break: break-all; }\n\n.card-margin {\n  margin-bottom: 10px; }\n\n#songlist {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between; }\n\n.big-end-button {\n  margin-bottom: 10px;\n  font-size: 200%; }\n\n.pl-playing {\n  color: white;\n  background-color: #00d1b2; }\n", ""]);
+exports.push([module.i, "#logopage {\n  display: flex;\n  flex-direction: column;\n  flex-wrap: nowrap;\n  align-items: center;\n  justify-content: space-between;\n  align-content: center; }\n\n.logged-buttons {\n  display: flex;\n  flex-direction: column; }\n\n.pls {\n  display: flex;\n  flex-direction: column;\n  flex-wrap: nowrap;\n  justify-content: space-between;\n  align-items: space-between; }\n\n.onepl {\n  margin-top: 10px;\n  margin-bottom: 10px; }\n\n.main-burger {\n  text-align: right; }\n\n.list-tab {\n  display: flex;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n.add-pl {\n  height: 150%;\n  justify-self: flex-end; }\n\n.zi-panel {\n  padding: 0 15px; }\n\n.zi-panel-margin {\n  margin-top: 10px; }\n\nnav {\n  box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);\n  margin-bottom: 10px; }\n\n.navbar-burger {\n  border: none;\n  background-color: white; }\n\n.logopic {\n  width: 50%;\n  margin-bottom: 50px; }\n\n.pl-status-head {\n  font-size: 100%; }\n\n.input-round {\n  border-radius: 10pt; }\n\n.break-letter {\n  word-break: break-all; }\n\n.card-margin {\n  margin-bottom: 10px; }\n\n#songlist {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between; }\n\n.big-end-button {\n  margin-bottom: 10px;\n  font-size: 200%; }\n\n.pl-playing {\n  color: white;\n  background-color: #00d1b2; }\n\n.margin-top-ten {\n  margin-top: 10px; }\n", ""]);
 
 // exports
 
+
+/***/ }),
+/* 317 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(2);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(4);
+
+var _api = __webpack_require__(3);
+
+var _api2 = _interopRequireDefault(_api);
+
+var _configureStore = __webpack_require__(6);
+
+var _configureStore2 = _interopRequireDefault(_configureStore);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Modifyme = function (_Component) {
+    _inherits(Modifyme, _Component);
+
+    function Modifyme() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, Modifyme);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Modifyme.__proto__ || Object.getPrototypeOf(Modifyme)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+            password: "",
+            pseudo: "",
+            passwordValid: false,
+            pseudoValid: false,
+            submitActive: true
+        }, _this.onChangeInput = function (name) {
+            var self = _this;
+            return function (e) {
+                var value = e.target.value;
+
+                var o = {};
+                o[name] = value;
+                self.setState(function () {
+                    return o;
+                });
+                switch (name) {
+                    case "password":
+                        _this.setState(function () {
+                            return { passwordValid: !!(value.length >= 6) };
+                        });
+                        break;
+                    case "pseudo":
+                        _this.setState(function () {
+                            return { pseudoValid: !!(value.length >= 4) };
+                        });
+                        break;
+                    default:
+                        break;
+                }
+            };
+        }, _this.doNothing = function (e) {
+            console.log("Do nothing");
+        }, _this.onCancel = function (e) {
+            e.preventDefault();
+            _configureStore2.default.dispatch({
+                type: "SETPAGENAME",
+                data: {
+                    pagename: "logo"
+                }
+            });
+        }, _this.onClose = function (e) {
+            e.preventDefault();
+            var prev = _this.props.page.prev;
+
+            _configureStore2.default.dispatch({
+                type: "SETPAGENAME",
+                data: {
+                    pagename: prev || "mylist"
+                }
+            });
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(Modifyme, [{
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            this.setState(function () {
+                return {
+                    pseudo: _this2.props.user.pseudo
+                };
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this3 = this;
+
+            return _react2.default.createElement(
+                "div",
+                null,
+                _react2.default.createElement(
+                    "nav",
+                    { className: "navbar is-fixed-top", role: "navigation", "aria-label": "main navigation" },
+                    _react2.default.createElement(
+                        "div",
+                        { className: "navbar-brand" },
+                        _react2.default.createElement(
+                            "a",
+                            { className: "navbar-item", href: "#", onClick: this.onClose },
+                            _react2.default.createElement("i", { className: "fa fa-chevron-left", "aria-hidden": "true", width: "28", height: "28" })
+                        ),
+                        _react2.default.createElement(
+                            "span",
+                            { className: "navbar-item" },
+                            "Account Settings"
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { className: "zi-panel margin-top-ten" },
+                    _react2.default.createElement(
+                        "p",
+                        null,
+                        "You can change your pseudo and password, leave password empty if you don't want to change it."
+                    ),
+                    _react2.default.createElement(
+                        "form",
+                        { onSubmit: this.state.submitActive ? this.onSubmit : this.doNothing },
+                        _react2.default.createElement(
+                            "div",
+                            { className: "field" },
+                            _react2.default.createElement(
+                                "label",
+                                { className: "label" },
+                                "Password"
+                            ),
+                            _react2.default.createElement(
+                                "div",
+                                { className: "control has-icons-left has-icons-right" },
+                                _react2.default.createElement("input", {
+                                    className: this.state.passwordValid ? "input is-success" : "input",
+                                    type: "password",
+                                    placeholder: "password > 6",
+                                    value: this.state.password,
+                                    onChange: this.onChangeInput("password")
+                                }),
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "icon is-small is-left" },
+                                    _react2.default.createElement("i", { className: "fa fa-key" })
+                                ),
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "icon is-small is-right" },
+                                    this.state.passwordValid ? _react2.default.createElement("i", { className: "fa fa-check" }) : ""
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "field" },
+                            _react2.default.createElement(
+                                "label",
+                                { className: "label" },
+                                "Username"
+                            ),
+                            _react2.default.createElement(
+                                "div",
+                                { className: "control has-icons-left has-icons-right" },
+                                _react2.default.createElement("input", {
+                                    className: function (valid) {
+                                        return valid ? "input is-success" : "input";
+                                    }(this.state.pseudoValid),
+                                    type: "text",
+                                    placeholder: "pseudo > 4",
+                                    value: this.state.pseudo,
+                                    onChange: this.onChangeInput("pseudo")
+                                }),
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "icon is-small is-left" },
+                                    _react2.default.createElement("i", { className: "fa fa-user" })
+                                ),
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "icon is-small is-right" },
+                                    this.state.pseudoValid ? _react2.default.createElement("i", { className: "fa fa-check" }) : ""
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "field is-grouped" },
+                            _react2.default.createElement(
+                                "div",
+                                { className: "control" },
+                                function () {
+                                    if (_this3.state.passwordValid && _this3.state.pseudoValid) return _react2.default.createElement(
+                                        "button",
+                                        { className: "button is-link" },
+                                        "Submit"
+                                    );
+                                    return _react2.default.createElement(
+                                        "button",
+                                        { className: "button is-link", disabled: true },
+                                        "Submit"
+                                    );
+                                }()
+                            ),
+                            _react2.default.createElement(
+                                "div",
+                                { className: "control", onClick: this.onCancel },
+                                _react2.default.createElement(
+                                    "button",
+                                    { className: "button is-text" },
+                                    "Cancel"
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return Modifyme;
+}(_react.Component);
+
+var mapStatetoProps = function mapStatetoProps(state) {
+    return {
+        user: state.user,
+        page: state.page,
+        pl: state.pl
+    };
+};
+
+exports.default = (0, _reactRedux.connect)(mapStatetoProps)(Modifyme);
 
 /***/ })
 /******/ ]);

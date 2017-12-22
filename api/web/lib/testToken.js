@@ -8,7 +8,10 @@ const verify = token => {
        method: "GET",
        headers
     })
-    .then(data => data.json())
+    .then(response => {
+        if(response.status >= 400) return Promise.reject();
+        return response.json()
+    })
 };
 
 export default () => (

@@ -79,7 +79,7 @@ export default class Login extends Component{
         })
         .then(obj => {
             console.log(obj);
-            sessionStorage.setItem("token", obj.token);
+            localStorage.setItem("token", obj.token);
             store.dispatch({
                 type: "SETUSER",
                 data: {
