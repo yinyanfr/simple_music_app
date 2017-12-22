@@ -2,7 +2,7 @@
 
 - YIN Yan
 
-<div><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
+<div><img src="https://github.com/yinyanfr/simple_music_app/tree/master/doc/img/sma.jpg" /></div>
 
 This document is also available in Chinese and French, see doc/
 
@@ -47,6 +47,7 @@ then http://localhost:30706
 | i18n                               | /      | x    |
 | Youtube Search/Play                | ok     | ok   |
 | Add music to playlist              | ok     | ok   |
+| Private playlist                   | ok     | ok   |
 | Status of user/playlist            | ok     | ok   |
 | Authentification                   | ok     | ok   |
 | Modification of user               | ok     | ok   |
@@ -54,8 +55,9 @@ then http://localhost:30706
 | Share playlist via app             | x      | x    |
 | Instant notification via socket.io | x      | x    |
 | Style                              | /      | ok   |
+| unit test                          | ok     | x    |
 | Native app                         | /      | x    |
 
 
 
-
+<div><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
