@@ -179,18 +179,23 @@ class Playlist extends Component{
                             }
                         })(this.state.pl.creator === thispl.props.user.email)}
                         {(() => {
-                            if(this.state.innerpage === "songs"){
-                                if(this.state.pl.creator === thispl.props.user.email){
-                                    return <button className="button is-primary is-pulled-right add-pl" onClick={this.onAddSong}>Add Song</button>
-                                }else{
-                                    if(!this.state.forked){
-                                        return <button className="button is-link is-pulled-right add-pl" onClick={this.onFork}>Collect</button>
-                                    }else{
-                                        return <button className="button is-link is-pulled-right add-pl" disabled onClick={this.onFork}>Collected</button>
-                                    }
-                                }
-                            }
+                            // if(this.state.innerpage === "songs"){
+                            //     if(this.state.pl.creator === thispl.props.user.email){
+                            //         return <button className="button is-primary is-pulled-right add-pl" onClick={this.onAddSong}>Add Song</button>
+                            //     }else{
+                            //         if(!this.state.forked){
+                            //             return <button className="button is-link is-pulled-right add-pl" onClick={this.onFork}>Collect</button>
+                            //         }else{
+                            //             return <button className="button is-link is-pulled-right add-pl" disabled onClick={this.onFork}>Collected</button>
+                            //         }
+                            //     }
+                            // }
                         })()}
+                        <button className="button is-info is-pulled-right add-pl">
+                            <i className="fa fa-share-alt" aria-hidden="true"></i>
+                            &nbsp;
+                            Share
+                        </button>
                     </ul>
                 </div>
                 <div className="zi-panel">

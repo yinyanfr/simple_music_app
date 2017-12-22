@@ -10,7 +10,9 @@ class Modifyme extends Component{
         pseudo: "",
         passwordValid: false,
         pseudoValid: true,
-        submitActive: true
+        submitActive: true,
+        success: false,
+        fail: false
     }
 
     componentDidMount(){
@@ -41,13 +43,37 @@ class Modifyme extends Component{
 
     onSubmit = e => {
         const {password, pseudo} = this.state
-        fetch(api("register"), {
+        const {email, token} = this.props.user
+        fetch(api("modifyme"), {
             method: "POST",
             headers: new Headers({
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "x-auth": token
             }),
-            body: JSON.stringify(body)
+            body: JSON.stringify({password, pseudo})
         })
+            .then(response => {
+                if(response.status >= 400) return Promise.reject()
+                return response.text()
+            })
+            .then(obj => {
+                console.log(obj)
+                store.dispatch({
+                    type: "SETUSER",
+                    data: {
+                        email, pseudo, token
+                    }
+                })
+                this.setState(() => ({
+                    success: true
+                }))
+            })
+            .catch(err => {
+                console.log(err)
+                this.setState(() => ({
+                    fail: true
+                }))
+            })
     }
 
     doNothing = e => {
@@ -90,6 +116,8 @@ class Modifyme extends Component{
 
                 <div className="zi-panel margin-top-ten">
                     <p>You can change your pseudo and password, leave password empty if you don't want to change it.</p>
+                    {this.state.success ? <div className="notification is-primary">Success</div> : ""}
+                    {this.state.fail ? <div className="notification is-danger">Failed</div> : ""}
                     <form onSubmit={this.state.submitActive? this.onSubmit : this.doNothing}>
                         <div className="field">
                             <label className="label">Password</label>

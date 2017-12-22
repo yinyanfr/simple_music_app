@@ -11,7 +11,8 @@ class Searchpl extends Component{
     state = {
         keyword: "",
         loading: false,
-        result: []
+        result: [],
+        searched: false
     }
 
     onClose = e => {
@@ -45,7 +46,8 @@ class Searchpl extends Component{
                 .then(result => {
                     this.setState(() => ({
                         result,
-                        loading: false
+                        loading: false,
+                        searched: true
                     }))
                     store.dispatch({
                         type: "SETSEARCHLIST",
@@ -82,6 +84,12 @@ class Searchpl extends Component{
                             </span>
                         </div>
                     </form>
+
+                    <div>
+                        {this.state.searched && (this.state.result.length === 0)
+                            ? "Not found"
+                            : "Type the name or id of a playlist to search"}
+                    </div>
 
                     <div>{(() => {
                         if(this.state.result.length){

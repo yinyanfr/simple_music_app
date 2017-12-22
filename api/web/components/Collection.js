@@ -103,7 +103,7 @@ class Collection extends Component{
                         >
                             <a>Collections</a>
                         </li>
-                        <button className="button is-link is-pulled-right add-pl" onClick={this.onSearchPlaylist}>Search Playlist</button>
+                        <button className="button is-info is-pulled-right add-pl" onClick={this.onSearchPlaylist}>Search Playlist</button>
                     </ul>
                 </div>
                 <div className="pls zi-panel">
@@ -122,7 +122,7 @@ class Collection extends Component{
                     })()}</div>
 
                 
-                        <button className="button is-link big-end-button" onClick={this.onSearchPlaylist}>
+                        <button className="button is-info big-end-button" onClick={this.onSearchPlaylist}>
                             <i className="fa fa-search" aria-hidden="true"></i>
                             &nbsp;&nbsp;
                             Search Playlist

@@ -42203,7 +42203,7 @@ var Collection = function (_Component) {
                         ),
                         _react2.default.createElement(
                             "button",
-                            { className: "button is-link is-pulled-right add-pl", onClick: this.onSearchPlaylist },
+                            { className: "button is-info is-pulled-right add-pl", onClick: this.onSearchPlaylist },
                             "Search Playlist"
                         )
                     )
@@ -42234,7 +42234,7 @@ var Collection = function (_Component) {
                     ),
                     _react2.default.createElement(
                         "button",
-                        { className: "button is-link big-end-button", onClick: this.onSearchPlaylist },
+                        { className: "button is-info big-end-button", onClick: this.onSearchPlaylist },
                         _react2.default.createElement("i", { className: "fa fa-search", "aria-hidden": "true" }),
                         "\xA0\xA0 Search Playlist"
                     )
@@ -45495,30 +45495,24 @@ var Playlist = function (_Component) {
                             }
                         }(this.state.pl.creator === thispl.props.user.email),
                         function () {
-                            if (_this3.state.innerpage === "songs") {
-                                if (_this3.state.pl.creator === thispl.props.user.email) {
-                                    return _react2.default.createElement(
-                                        "button",
-                                        { className: "button is-primary is-pulled-right add-pl", onClick: _this3.onAddSong },
-                                        "Add Song"
-                                    );
-                                } else {
-                                    if (!_this3.state.forked) {
-                                        return _react2.default.createElement(
-                                            "button",
-                                            { className: "button is-link is-pulled-right add-pl", onClick: _this3.onFork },
-                                            "Collect"
-                                        );
-                                    } else {
-                                        return _react2.default.createElement(
-                                            "button",
-                                            { className: "button is-link is-pulled-right add-pl", disabled: true, onClick: _this3.onFork },
-                                            "Collected"
-                                        );
-                                    }
-                                }
-                            }
-                        }()
+                            // if(this.state.innerpage === "songs"){
+                            //     if(this.state.pl.creator === thispl.props.user.email){
+                            //         return <button className="button is-primary is-pulled-right add-pl" onClick={this.onAddSong}>Add Song</button>
+                            //     }else{
+                            //         if(!this.state.forked){
+                            //             return <button className="button is-link is-pulled-right add-pl" onClick={this.onFork}>Collect</button>
+                            //         }else{
+                            //             return <button className="button is-link is-pulled-right add-pl" disabled onClick={this.onFork}>Collected</button>
+                            //         }
+                            //     }
+                            // }
+                        }(),
+                        _react2.default.createElement(
+                            "button",
+                            { className: "button is-info is-pulled-right add-pl" },
+                            _react2.default.createElement("i", { className: "fa fa-share-alt", "aria-hidden": "true" }),
+                            "\xA0 Share"
+                        )
                     )
                 ),
                 _react2.default.createElement(
@@ -45647,6 +45641,12 @@ var Songlist = function (_Component) {
                     { className: "title is-2" },
                     "Nothing here"
                 ) : "",
+                this.pl.creator === this.props.user.email ? _react2.default.createElement(
+                    "button",
+                    { className: "button is-primary big-end-button", onClick: this.onAddSong },
+                    _react2.default.createElement("i", { className: "fa fa-plus", "aria-hidden": "true" }),
+                    "\xA0\xA0 Add songs"
+                ) : "",
                 _react2.default.createElement(
                     "div",
                     null,
@@ -45657,13 +45657,7 @@ var Songlist = function (_Component) {
                             e
                         );
                     })
-                ),
-                this.pl.creator === this.props.user.email ? _react2.default.createElement(
-                    "button",
-                    { className: "button is-primary big-end-button", onClick: this.onAddSong },
-                    _react2.default.createElement("i", { className: "fa fa-plus", "aria-hidden": "true" }),
-                    "\xA0\xA0 Add songs"
-                ) : ""
+                )
             );
         }
     }]);
@@ -45753,6 +45747,11 @@ var OnesongPl = function (_Component) {
                 _configureStore2.default.dispatch({
                     type: "STOPMUSIC"
                 });
+                _this.setState(function () {
+                    return {
+                        isPlaying: false
+                    };
+                });
             } else {
                 _configureStore2.default.dispatch({
                     type: "CHANGETRACK",
@@ -45760,7 +45759,19 @@ var OnesongPl = function (_Component) {
                         link: link
                     }
                 });
+                _this.setState(function () {
+                    return {
+                        isPlaying: true
+                    };
+                });
             }
+        }, _this.onFinish = function (e) {
+            e.preventDefault();
+            _this.setState(function () {
+                return {
+                    isPlaying: false
+                };
+            });
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -45779,7 +45790,7 @@ var OnesongPl = function (_Component) {
             return _react2.default.createElement(
                 "div",
                 null,
-                this.props.player.nowplaying === link ? _react2.default.createElement(_reactPlayer2.default, { width: 0, height: 0, url: link, playing: true }) : "",
+                this.props.player.nowplaying === link ? _react2.default.createElement(_reactPlayer2.default, { width: 0, height: 0, url: link, onEnded: this.onFinish, playing: true }) : "",
                 _react2.default.createElement(
                     "div",
                     { className: "card-margin" },
@@ -45828,8 +45839,9 @@ var OnesongPl = function (_Component) {
                             _react2.default.createElement(
                                 "a",
                                 { href: "#", className: "card-footer-item", onClick: this.onPlay },
-                                _react2.default.createElement("i", { className: "fa fa-play", "aria-hidden": "true" }),
-                                "\xA0\xA0 Play"
+                                _react2.default.createElement("i", { className: this.state.isPlaying ? "fa fa-pause" : "fa fa-play", "aria-hidden": "true" }),
+                                "\xA0\xA0",
+                                this.state.isPlaying ? "Pause" : "Play"
                             )
                         )
                     )
@@ -48687,7 +48699,8 @@ var Searchpl = function (_Component) {
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Searchpl.__proto__ || Object.getPrototypeOf(Searchpl)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             keyword: "",
             loading: false,
-            result: []
+            result: [],
+            searched: false
         }, _this.onClose = function (e) {
             e.preventDefault();
             _configureStore2.default.dispatch({
@@ -48719,7 +48732,8 @@ var Searchpl = function (_Component) {
                     _this.setState(function () {
                         return {
                             result: result,
-                            loading: false
+                            loading: false,
+                            searched: true
                         };
                     });
                     _configureStore2.default.dispatch({
@@ -48779,6 +48793,11 @@ var Searchpl = function (_Component) {
                                 _react2.default.createElement("i", { className: "fa fa-search" })
                             )
                         )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        null,
+                        this.state.searched && this.state.result.length === 0 ? "Not found" : "Type the name or id of a playlist to search"
                     ),
                     _react2.default.createElement(
                         "div",
@@ -49045,7 +49064,7 @@ exports = module.exports = __webpack_require__(181)(undefined);
 
 
 // module
-exports.push([module.i, "#logopage {\n  display: flex;\n  flex-direction: column;\n  flex-wrap: nowrap;\n  align-items: center;\n  justify-content: space-between;\n  align-content: center; }\n\n.logged-buttons {\n  display: flex;\n  flex-direction: column; }\n\n.pls {\n  display: flex;\n  flex-direction: column;\n  flex-wrap: nowrap;\n  justify-content: space-between;\n  align-items: space-between; }\n\n.onepl {\n  margin-top: 10px;\n  margin-bottom: 10px; }\n\n.main-burger {\n  text-align: right; }\n\n.list-tab {\n  display: flex;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n.add-pl {\n  height: 150%;\n  justify-self: flex-end; }\n\n.zi-panel {\n  padding: 0 15px; }\n\n.zi-panel-margin {\n  margin-top: 10px; }\n\nnav {\n  box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);\n  margin-bottom: 10px; }\n\n.navbar-burger {\n  border: none;\n  background-color: white; }\n\n.logopic {\n  width: 50%;\n  margin-bottom: 50px; }\n\n.pl-status-head {\n  font-size: 100%; }\n\n.input-round {\n  border-radius: 10pt; }\n\n.break-letter {\n  word-break: break-all; }\n\n.card-margin {\n  margin-bottom: 10px; }\n\n#songlist {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between; }\n\n.big-end-button {\n  margin-bottom: 10px;\n  font-size: 200%; }\n\n.pl-playing {\n  color: white;\n  background-color: #00d1b2; }\n\n.margin-top-ten {\n  margin-top: 10px; }\n", ""]);
+exports.push([module.i, "#logopage {\n  display: flex;\n  flex-direction: column;\n  flex-wrap: nowrap;\n  align-items: center;\n  justify-content: space-between;\n  align-content: center; }\n\n.logged-buttons {\n  display: flex;\n  flex-direction: column; }\n\n.pls {\n  display: flex;\n  flex-direction: column;\n  flex-wrap: nowrap;\n  justify-content: space-between;\n  align-items: space-between; }\n\n.onepl {\n  margin-top: 10px;\n  margin-bottom: 10px; }\n\n.main-burger {\n  text-align: right; }\n\n.list-tab {\n  display: flex;\n  align-items: flex-end;\n  justify-content: flex-end; }\n\n.add-pl {\n  height: 150%;\n  justify-self: flex-end;\n  flex-grow: 1;\n  flex-shrink: 2; }\n\n.zi-panel {\n  padding: 0 15px; }\n\n.zi-panel-margin {\n  margin-top: 10px; }\n\nnav {\n  box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);\n  margin-bottom: 10px; }\n\n.navbar-burger {\n  border: none;\n  background-color: white; }\n\n.logopic {\n  width: 50%;\n  margin-bottom: 50px; }\n\n.pl-status-head {\n  font-size: 100%; }\n\n.input-round {\n  border-radius: 10pt; }\n\n.break-letter {\n  word-break: break-all; }\n\n.card-margin {\n  margin-bottom: 10px; }\n\n#songlist {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between; }\n\n.big-end-button {\n  margin-bottom: 10px;\n  font-size: 150%; }\n\n.pl-playing {\n  color: white;\n  background-color: #00d1b2; }\n\n.margin-top-ten {\n  margin-top: 10px; }\n", ""]);
 
 // exports
 
@@ -49104,7 +49123,9 @@ var Modifyme = function (_Component) {
             pseudo: "",
             passwordValid: false,
             pseudoValid: true,
-            submitActive: true
+            submitActive: true,
+            success: false,
+            fail: false
         }, _this.onChangeInput = function (name) {
             var self = _this;
             return function (e) {
@@ -49134,13 +49155,40 @@ var Modifyme = function (_Component) {
             var _this$state = _this.state,
                 password = _this$state.password,
                 pseudo = _this$state.pseudo;
+            var _this$props$user = _this.props.user,
+                email = _this$props$user.email,
+                token = _this$props$user.token;
 
-            fetch((0, _api2.default)("register"), {
+            fetch((0, _api2.default)("modifyme"), {
                 method: "POST",
                 headers: new Headers({
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "x-auth": token
                 }),
-                body: JSON.stringify(body)
+                body: JSON.stringify({ password: password, pseudo: pseudo })
+            }).then(function (response) {
+                if (response.status >= 400) return Promise.reject();
+                return response.text();
+            }).then(function (obj) {
+                console.log(obj);
+                _configureStore2.default.dispatch({
+                    type: "SETUSER",
+                    data: {
+                        email: email, pseudo: pseudo, token: token
+                    }
+                });
+                _this.setState(function () {
+                    return {
+                        success: true
+                    };
+                });
+            }).catch(function (err) {
+                console.log(err);
+                _this.setState(function () {
+                    return {
+                        fail: true
+                    };
+                });
             });
         }, _this.doNothing = function (e) {
             console.log("Do nothing");
@@ -49210,6 +49258,16 @@ var Modifyme = function (_Component) {
                         null,
                         "You can change your pseudo and password, leave password empty if you don't want to change it."
                     ),
+                    this.state.success ? _react2.default.createElement(
+                        "div",
+                        { className: "notification is-primary" },
+                        "Success"
+                    ) : "",
+                    this.state.fail ? _react2.default.createElement(
+                        "div",
+                        { className: "notification is-danger" },
+                        "Failed"
+                    ) : "",
                     _react2.default.createElement(
                         "form",
                         { onSubmit: this.state.submitActive ? this.onSubmit : this.doNothing },

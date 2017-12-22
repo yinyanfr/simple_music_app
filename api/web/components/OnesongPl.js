@@ -21,6 +21,9 @@ class OnesongPl extends Component{
             store.dispatch({
                 type: "STOPMUSIC"
             })
+            this.setState(() => ({
+                isPlaying: false
+            }))
         }else{
             store.dispatch({
                 type: "CHANGETRACK",
@@ -28,7 +31,17 @@ class OnesongPl extends Component{
                     link
                 }
             })
+            this.setState(() => ({
+                isPlaying: true
+            }))
         }
+    }
+    
+    onFinish = e => {
+        e.preventDefault()
+        this.setState(() => ({
+            isPlaying: false
+        }))
     }
 
     render(){
@@ -39,7 +52,7 @@ class OnesongPl extends Component{
             <div>
                 {
                     this.props.player.nowplaying === link
-                    ? <ReactPlayer width={0} height={0} url={link} playing />
+                    ? <ReactPlayer width={0} height={0} url={link} onEnded={this.onFinish} playing />
                     : ""
                 }
                 
@@ -65,9 +78,9 @@ class OnesongPl extends Component{
 
                         <footer className={(this.props.player.nowplaying === link) ? "card-footer pl-playing" : "card-footer"}>
                             <a href="#" className="card-footer-item" onClick={this.onPlay}>
-                                <i className="fa fa-play" aria-hidden="true"></i>
+                                <i className={this.state.isPlaying ? "fa fa-pause" : "fa fa-play"} aria-hidden="true"></i>
                                 &nbsp;&nbsp;
-                                Play
+                                {this.state.isPlaying ? "Pause" : "Play"}
                             </a>
                         </footer>
                     </div>
