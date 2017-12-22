@@ -9,7 +9,7 @@ class Modifyme extends Component{
         password: "",
         pseudo: "",
         passwordValid: false,
-        pseudoValid: false,
+        pseudoValid: true,
         submitActive: true
     }
 
@@ -38,6 +38,17 @@ class Modifyme extends Component{
             }
         }
     };
+
+    onSubmit = e => {
+        const {password, pseudo} = this.state
+        fetch(api("register"), {
+            method: "POST",
+            headers: new Headers({
+                "Content-Type": "application/json"
+            }),
+            body: JSON.stringify(body)
+        })
+    }
 
     doNothing = e => {
         console.log("Do nothing")
@@ -119,7 +130,7 @@ class Modifyme extends Component{
                         <div className="field is-grouped">
                             <div className="control">
                             {(() => {
-                                if(this.state.passwordValid && this.state.pseudoValid)
+                                if((this.state.passwordValid || this.state.password.length === 0) && this.state.pseudoValid)
                                 return (<button className="button is-link">Submit</button>);
                                 return <button className="button is-link" disabled>Submit</button>
                             })()}

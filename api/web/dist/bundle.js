@@ -49103,7 +49103,7 @@ var Modifyme = function (_Component) {
             password: "",
             pseudo: "",
             passwordValid: false,
-            pseudoValid: false,
+            pseudoValid: true,
             submitActive: true
         }, _this.onChangeInput = function (name) {
             var self = _this;
@@ -49130,6 +49130,18 @@ var Modifyme = function (_Component) {
                         break;
                 }
             };
+        }, _this.onSubmit = function (e) {
+            var _this$state = _this.state,
+                password = _this$state.password,
+                pseudo = _this$state.pseudo;
+
+            fetch((0, _api2.default)("register"), {
+                method: "POST",
+                headers: new Headers({
+                    "Content-Type": "application/json"
+                }),
+                body: JSON.stringify(body)
+            });
         }, _this.doNothing = function (e) {
             console.log("Do nothing");
         }, _this.onCancel = function (e) {
@@ -49270,7 +49282,7 @@ var Modifyme = function (_Component) {
                                 "div",
                                 { className: "control" },
                                 function () {
-                                    if (_this3.state.passwordValid && _this3.state.pseudoValid) return _react2.default.createElement(
+                                    if ((_this3.state.passwordValid || _this3.state.password.length === 0) && _this3.state.pseudoValid) return _react2.default.createElement(
                                         "button",
                                         { className: "button is-link" },
                                         "Submit"
