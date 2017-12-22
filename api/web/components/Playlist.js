@@ -209,8 +209,6 @@ class Playlist extends Component{
                             }
                         })()}
                         <button className="button is-info is-pulled-right add-pl" onClick={this.onShare}>
-                            <i className="fa fa-share-alt" aria-hidden="true"></i>
-                            &nbsp;
                             Share
                         </button>
                     </ul>
