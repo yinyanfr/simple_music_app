@@ -14,14 +14,14 @@ export default class Register extends Component{
             passwordValid: false,
             pseudoValid: false,
             submitActive: true,
-            agreement: false
+            agreement: false,
+            termChecked: false
         }
     }
 
     testEmailExistence = email => {
-        return fetch(api(`searchUser/${email}`), {
-            mode: "GET"
-        }).then(data => data.json())
+        return fetch(api(`searchUser/${email}`))
+            .then(data => data.json())
     }
 
     onChangeInput = name => {
@@ -55,6 +55,14 @@ export default class Register extends Component{
             }
         }
     };
+
+    onCheck = e => {
+        e.preventDefault()
+        let {checked} = e.target
+        this.setState(() => ({
+            termChecked: checked
+        }))
+    }
 
     onSubmit = e => {
         e.preventDefault();
@@ -219,7 +227,7 @@ export default class Register extends Component{
                         <div className="field is-grouped">
                             <div className="control">
                             {(() => {
-                                if((!!this.state.emailValid) && this.state.passwordValid && this.state.pseudoValid && this.state.agreement)
+                                if((!!this.state.emailValid) && this.state.passwordValid && this.state.pseudoValid)
                                 return (<button className="button is-link">Submit</button>);
                                 return <button className="button is-link" disabled>Submit</button>
                             })()}

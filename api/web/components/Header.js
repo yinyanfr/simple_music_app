@@ -23,6 +23,7 @@ class Header extends Component {
                    return Promise.reject("logout failed")
                }else {
                    sessionStorage.removeItem("token");
+                   localStorage.removeItem("token");
                    store.dispatch(
                         {
                             type: "DELETEUSER"

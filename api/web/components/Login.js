@@ -17,9 +17,8 @@ export default class Login extends Component{
     }
 
     testEmailExistence = email => {
-        return fetch(api(`searchUser/${email}`), {
-            mode: "GET"
-        }).then(data => data.json())
+        return fetch(api(`searchUser/${email}`))
+            .then(data => data.json())
     }
 
     onChangeInput = name => {

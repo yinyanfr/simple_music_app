@@ -100,3 +100,15 @@ nav{
 .margin-top-ten{
     margin-top: 10px;
 }
+
+@media only screen and (min-width: 768px){
+    body{
+        margin-left: auto;
+        margin-right: auto;
+        width: 768px;
+    }
+    
+    .tabs{
+        margin-top: 10px;
+    }
+}

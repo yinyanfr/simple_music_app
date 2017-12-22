@@ -5,6 +5,7 @@ import store from "./../redux/configureStore"
 import Songlist from "./Songlist"
 import Detail from "./Detail"
 import Modifypl from "./Modifypl"
+import Clipboard from "clipboard"
 
 class Playlist extends Component{
 
@@ -12,7 +13,8 @@ class Playlist extends Component{
         notFound: false,
         pl: {},
         innerpage: "",
-        forked: false
+        forked: false,
+        share: false
     }
 
     componentDidMount(){
@@ -140,8 +142,23 @@ class Playlist extends Component{
         })
     }
 
+    onShare = e => {
+        e.preventDefault()
+        this.setState(() => ({
+            share: true
+        }))
+    }
+
+    onCloseShare = e => {
+        e.preventDefault()
+        this.setState(() => ({
+            share: false
+        }))
+    }
+
     render(){
         var thispl = this;
+        var copy = new Clipboard("#copy")
         return (
             <div>
                 <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation">
@@ -179,19 +196,19 @@ class Playlist extends Component{
                             }
                         })(this.state.pl.creator === thispl.props.user.email)}
                         {(() => {
-                            // if(this.state.innerpage === "songs"){
-                            //     if(this.state.pl.creator === thispl.props.user.email){
-                            //         return <button className="button is-primary is-pulled-right add-pl" onClick={this.onAddSong}>Add Song</button>
-                            //     }else{
-                            //         if(!this.state.forked){
-                            //             return <button className="button is-link is-pulled-right add-pl" onClick={this.onFork}>Collect</button>
-                            //         }else{
-                            //             return <button className="button is-link is-pulled-right add-pl" disabled onClick={this.onFork}>Collected</button>
-                            //         }
-                            //     }
-                            // }
+                            if(this.state.innerpage === "songs"){
+                                if(this.state.pl.creator === thispl.props.user.email){
+                                    return <button className="button is-primary is-pulled-right add-pl" onClick={this.onAddSong}>Add</button>
+                                }else{
+                                    if(!this.state.forked){
+                                        return <button className="button is-link is-pulled-right add-pl" onClick={this.onFork}>Collect</button>
+                                    }else{
+                                        return <button className="button is-link is-pulled-right add-pl" disabled onClick={this.onFork}>Collected</button>
+                                    }
+                                }
+                            }
                         })()}
-                        <button className="button is-info is-pulled-right add-pl">
+                        <button className="button is-info is-pulled-right add-pl" onClick={this.onShare}>
                             <i className="fa fa-share-alt" aria-hidden="true"></i>
                             &nbsp;
                             Share
@@ -221,6 +238,26 @@ class Playlist extends Component{
                             }
                         }
                 })()}
+                </div>
+
+                <div className={this.state.share ? "modal is-active" : "modal"}>
+                    <div className="modal-background"></div>
+                    <div className="modal-card">
+                        <header className="modal-card-head">
+                            <p className="modal-card-title">Playlist ID</p>
+                            <button className="delete" aria-label="close" onClick={this.onCloseShare}></button>
+                        </header>
+                        <section className="modal-card-body">
+                            Please copy this id and send it to your friend
+                            <br />
+                            {this.props.page.pid}
+                        </section>
+                        <footer className="modal-card-foot">
+                            <button id="copy" className="button is-primary" onClick={this.onCloseShare}
+                                data-clipboard-text={this.props.page.pid}
+                            >Copy</button>
+                        </footer>
+                    </div>
                 </div>
             </div>
         )
