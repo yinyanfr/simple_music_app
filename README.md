@@ -4,8 +4,6 @@
 
 <div><img src="http://music.yinyan.fr/sma.jpg" /></div>
 
-This document is also available in Chinese and French, see doc/
-
 ### 1. Get Started
 
 **NodeJS v8+ & MongoDB 3.6+**
@@ -30,13 +28,15 @@ $ npm start
 
 then http://localhost:30706
 
-### 2. Liste de Technologies
+### 2. List of Technologies
 
-- Serveur
+- Server
   - NodeJS
   - MongoDB
 - Web
   - React
+- Style
+  - Bulma
 
 ### 3. List of functionalities
 
