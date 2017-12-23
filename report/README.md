@@ -68,7 +68,36 @@ visitez http://localhost:30706
 
 Voyez dans la repertoire img/
 
-#### 5. Problemes et Evaluation
+#### 5. Highlights
+
+Celles sont les choses que je suis fier:
+
+**Authentification vraie**
+
+Cette app utilise bcrypt pour crypter les mots de passe, utlise token pour authentifier l'identite de user, et les token sont crypter en SHA256 et salte.
+
+Par cela on a eviter de rejoindre les info de user dans les commmunications avec le serveur, les authentifications sont fait par token stocke dans le header de http request, specialement les api:
+
+- GET /me : obtenir **mon** information
+- GET /mylist : obtenir **mon** playlists
+- POST /forkpl : ajouter un playlist dans **mon** collection
+- DELETE /deletepl: supprimer un playlist de **moi**
+
+Bref, meme si les hackers crackent le front-end, ils ne peuvent pas manipuler les donnees d'un autre user.
+
+**Playlist prive**
+
+Cette app a realise une fonctionalite exclusive: les playlists prive 
+
+Utilisateurs peuvent creer des playlists prives, les playlists privees sont marke par une serrure, les autres users ne peut pas le voir meme avoir le id de playlist, ils ne peuvent pas etre trouves dans le search ou collecte par les autres users
+
+**Playlist search et collections**
+
+Les playlists crees par users peut etre cherches,
+
+quand un utlisateur visite un playlist cree par un autre user, il peut le collecter, les playlists collecte sont comme "fork" en github, une fois un playlist est collecte, le compteur de "shared" va +1, et une copie de ce playlist va paraitre dans la collection de user qui le collecte
+
+#### 6. Problemes et Evaluation
 
 **Tout nouveau technologie React**
 
@@ -92,6 +121,10 @@ Quand je commence par React, j'ai pense que cela soit facile de faire une implim
 
 La prochaine fois je vais commencer directement par React Native, parce-que React-Native provide les facons de deteter les touche en ecran tactile, et les bouton native dans un smartphone, quand c'est ultra difficile a realiser avec React
 
-#### 6. Mon avis
+#### 7. Mon avis
+
+Grace a ce cours, je prends une challenge, de facon que je souhaite.
+
+Cela prend du temps
 
 <div><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
