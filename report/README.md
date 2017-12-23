@@ -6,6 +6,12 @@
 
 <div><img src="http://music.yinyan.fr/sma.jpg" /></div>
 
+```
+Veuillez m'excusez pour tous les erreurs de francais dans ce compte rendu s'il vous plait.
+```
+
+
+
 ### 0. Online Version
 
 http://music.yinyan.fr/
@@ -38,7 +44,7 @@ visitez http://localhost:30706
 
 - Serveur
   - NodeJS
-  - MongoDB
+  - MongoDB (Mongoose)
 - Web
   - React
 - Style
@@ -125,6 +131,8 @@ La prochaine fois je vais commencer directement par React Native, parce-que Reac
 
 Grace a ce cours, je prends une challenge, de facon que je souhaite.
 
-Cela prend du temps
+Cela prend du temps, specialement pour moi parce j'essaye d'apprendre et utiliser les nouveaux technologies.
+
+Cette fois parmis les choix de dev, les choses nouveaux pour moi sont Mongoose, React et Bulma.
 
 <div><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
