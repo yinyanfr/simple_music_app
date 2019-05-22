@@ -1,5 +1,5 @@
 const search = require("youtube-search");
-const ytkey = "AIzaSyD591ANmEBv8bitXUwFQAzQp8oAsri4CWs";
+const ytkey = "too young too simple, sometimes naive.";
 
 const ytsearch = keyword => {
    return new Promise((resolve, reject) => {
